@@ -1,0 +1,27 @@
+{
+  "name": "docket-support-bot",
+  "version": "1.0.0",
+  "description": "Client support chatbot for Docket website clients",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": [
+    "support",
+    "chatbot",
+    "docket"
+  ],
+  "author": "",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "express": "^4.18.2",
+    "@supabase/supabase-js": "^2.39.0",
+    "@sendgrid/mail": "^7.7.0",
+    "@anthropic-ai/sdk": "^0.20.0",
+    "dotenv": "^16.3.1",
+    "cors": "^2.8.5"
+  }
+}

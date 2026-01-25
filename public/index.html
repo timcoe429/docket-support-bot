@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docket Support</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="chat-container" id="chatContainer">
+        <!-- Email Verification Screen -->
+        <div class="verification-screen" id="verificationScreen">
+            <div class="verification-content">
+                <h1>Docket Support</h1>
+                <p>Please enter your email address to get started</p>
+                <form id="verificationForm">
+                    <input 
+                        type="email" 
+                        id="emailInput" 
+                        placeholder="your@email.com" 
+                        required
+                        autocomplete="email"
+                    >
+                    <button type="submit" id="verifyButton">Continue</button>
+                </form>
+                <div class="error-message" id="verificationError"></div>
+            </div>
+        </div>
+
+        <!-- Chat Screen -->
+        <div class="chat-screen" id="chatScreen" style="display: none;">
+            <div class="chat-header">
+                <h2>Docket Support</h2>
+                <button class="close-button" id="closeButton" aria-label="Close chat">×</button>
+            </div>
+            
+            <div class="messages-container" id="messagesContainer">
+                <div class="message bot-message">
+                    <div class="message-content">
+                        Hi! I'm here to help. What can I assist you with today?
+                    </div>
+                    <div class="message-time"></div>
+                </div>
+            </div>
+
+            <div class="input-container">
+                <form id="messageForm">
+                    <input 
+                        type="text" 
+                        id="messageInput" 
+                        placeholder="Type your message..." 
+                        autocomplete="off"
+                        required
+                    >
+                    <button type="submit" id="sendButton">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+
+            <div class="loading-indicator" id="loadingIndicator" style="display: none;">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="chat.js"></script>
+</body>
+</html>

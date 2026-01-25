@@ -1,0 +1,62 @@
+[
+  {
+    "question": "How do I update my business hours?",
+    "answer": "Log into your dashboard at yourdocketonline.com, go to Settings > Business Info, and update your hours there. Changes typically take effect within a few minutes. Here's a guide: [link to guide]",
+    "category": "dashboard",
+    "keywords": ["hours", "business hours", "update hours", "change hours", "opening hours", "operating hours"]
+  },
+  {
+    "question": "How do I add or remove services?",
+    "answer": "You can manage your services in your dashboard under Services. To add a new service, click 'Add Service' and fill in the details. To remove a service, go to the service and click 'Archive'. Need help? Contact us and we can assist.",
+    "category": "services",
+    "keywords": ["services", "add service", "remove service", "delete service", "service management"]
+  },
+  {
+    "question": "How do I update my contact information?",
+    "answer": "Your contact information can be updated in Settings > Contact Info. Make sure to save your changes. If you need to update your primary email address, please contact support as this may require verification.",
+    "category": "account",
+    "keywords": ["contact", "phone", "email", "address", "update contact", "change contact"]
+  },
+  {
+    "question": "How do I view my website analytics?",
+    "answer": "Analytics are available in your dashboard under the Analytics section. You can view visitor statistics, popular pages, and more. Data is updated daily.",
+    "category": "analytics",
+    "keywords": ["analytics", "statistics", "visitors", "traffic", "views", "stats"]
+  },
+  {
+    "question": "How do I request a website change?",
+    "answer": "You can submit a change request through your dashboard under Support > Request Changes, or send us an email. We typically respond within 1-2 business days. For urgent changes, please contact us directly.",
+    "category": "support",
+    "keywords": ["change", "update website", "modify", "edit", "request change", "website update"]
+  },
+  {
+    "question": "How do I reset my password?",
+    "answer": "Click 'Forgot Password' on the login page and enter your email address. You'll receive a password reset link. If you don't receive it, check your spam folder or contact support.",
+    "category": "account",
+    "keywords": ["password", "reset password", "forgot password", "change password", "login"]
+  },
+  {
+    "question": "What payment methods do you accept?",
+    "answer": "We accept all major credit cards and ACH transfers. You can update your payment method in Settings > Billing. All payments are processed securely.",
+    "category": "billing",
+    "keywords": ["payment", "billing", "credit card", "payment method", "invoice", "pay"]
+  },
+  {
+    "question": "How do I access my invoices?",
+    "answer": "All invoices are available in your dashboard under Billing > Invoices. You can view, download, or print invoices at any time. Need a copy sent to a different email? Let us know.",
+    "category": "billing",
+    "keywords": ["invoice", "billing", "receipt", "payment history", "statements"]
+  },
+  {
+    "question": "How do I cancel my subscription?",
+    "answer": "We're sorry to see you go. To discuss cancellation options, please contact Kayla directly. She can help with the process and answer any questions about your account.",
+    "category": "account",
+    "keywords": ["cancel", "cancellation", "cancel subscription", "close account", "terminate"]
+  },
+  {
+    "question": "How do I add photos to my website?",
+    "answer": "You can upload photos through your dashboard under Content > Media Library. Supported formats are JPG, PNG, and WebP. For best results, images should be under 5MB. Need help optimizing images? We can assist.",
+    "category": "content",
+    "keywords": ["photos", "images", "pictures", "upload", "media", "gallery"]
+  }
+]
