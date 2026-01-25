@@ -33,3 +33,21 @@
 **No AI acknowledgment**
 - Chose: Bot never says "As an AI" or similar
 - Why: Should feel like chatting with a support team member, not a bot.
+
+## UI/UX
+
+**Two-panel layout with visual polish**
+- Chose: Keep 50/50 two-panel layout, add Fortune 500 visual polish
+- Why: Original concept was sound, execution looked dated. Adding depth (shadows), warmth (gradients), cards for categories, micro-interactions, and modern typography transforms it from "2010 basic" to "2026 premium SaaS"
+
+**Chat as primary, FAQ as secondary**
+- Chose: Both panels visible, but chat is the hero action
+- Why: We want users to chat (where AI handles repetitive questions), FAQ is self-service fallback
+
+**Unified header bar**
+- Chose: Single header above both panels with logo, title, online status
+- Why: Previous design had logo floating in empty space, felt disconnected. Unified header grounds the page.
+
+**Iterate until it's right**
+- Chose: Continue refining visuals until it looks premium
+- Why: First implementation looked "5th grader" quality. We don't ship until it looks Fortune 500. This is a client-facing tool.

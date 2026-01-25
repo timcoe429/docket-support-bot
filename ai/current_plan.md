@@ -1,35 +1,60 @@
 # Current Plan
 
 ## Last Updated
-January 24, 2026
+January 25, 2026
 
 ## What's Complete
-- Project restructured for Vercel + Neon stack
-- Vercel serverless functions (api/verify.js, api/message.js, api/escalate.js)
-- Neon database client (lib/db.js) with all SQL queries implemented
-- Integration files moved to /lib (churnzero.js, trello.js, claude.js, email.js)
-- Utility files moved to /lib (escalation.js, formatter.js)
-- Frontend chat interface (index.html, styles.css, chat.js)
-- Knowledge base structure (faq.json)
-- Documentation updated for new stack
+- Project structure created
+- Migration from Railway + Supabase to Vercel + Neon
+- Database tables created in Neon
+- Trello escalation integration (replaces email)
+- FAQ data structure with 7 categories, 52+ items
+- Two-panel support center layout (FAQ + Chat)
+- FAQ JSON moved to /public/faq.json for Vercel serving
+- Build validation script added (npm run build)
 
-## What's Partially Done
-- Nothing currently in progress
+## What's In Progress
+- **VISUAL REDESIGN** - Comprehensive UI overhaul completed
+  - Unified header bar implemented
+  - Card-based FAQ categories with icons and badges
+  - Elevated search bar with glow effects
+  - Improved chat welcome state with friendly messaging
+  - Micro-interactions and animations added
+  - Minimized panel states enhanced
+  - Modern color system and typography applied
+  - **Status: Implementation complete, ready for testing and iteration**
 
-## What's Next
-1. Test Vercel serverless functions locally with `vercel dev`
-2. Verify Neon database connections work
-3. Test full chat flow (verify → message → escalation)
-4. Implement Trello integration (API key available)
-5. Implement ChurnZero integration (API key pending — use mock data for now)
-6. Deploy to Vercel and configure environment variables
-7. Test deployed endpoints
+## What's Next (Immediate Priority)
+1. **Test locally** - Kill node processes, run `npx vercel dev`, check browser
+2. **Iterate on look and feel** - Review what was built, identify issues, refine
+3. **Continue polishing until it looks premium** - Not done until it feels Fortune 500
+4. **Fix any bugs or visual issues** discovered during testing
+
+## Visual Redesign Goals (Reference)
+- Unified header bar (logo, title, online status)
+- Card-based FAQ categories with icons and article counts
+- Elevated search bar with glow effects on focus
+- Improved chat panel with friendly welcome state ("Hey there! 👋")
+- Micro-interactions (hover lifts, background slides, pulse animations)
+- Better minimized panel states (actually useful, not just a label)
+- Depth via shadows, warmth via gradients, modern typography
+- Mobile: Bottom tab bar with icons
+
+## After Visual Polish is Complete
+1. Connect real APIs (Trello, ChurnZero, Claude) when keys available
+2. Deploy to Vercel production
+3. Point support.yourdocketonline.com to Vercel
+4. Test with real users
 
 ## Known Issues / Blockers
-- ChurnZero API key not yet available (expected in a few days)
-- DNS for support.yourdocketonline.com not yet configured
+- ChurnZero API key not yet available
+- Trello API keys not yet configured (using stubs)
+- Claude API key not yet added
+- DNS for support.yourdocketonline.com not configured
 
 ## Notes
-- Session handling is implemented — verify returns session_id, frontend stores it, message endpoint validates before processing
-- All database queries converted from Supabase to Neon SQL with parameterized queries
-- Frontend API calls use relative paths which work on Vercel
+- All external API calls are stubbed with console.log for testing
+- FAQ search works with keyword matching
+- Escalation triggers create Trello cards (stubbed)
+- Chat has fake "connecting" delay (5-8 seconds) for realism
+- **The UI must feel modern, polished, and premium before we move on**
