@@ -1,0 +1,33 @@
+# Project Context
+
+## What This Is
+Docket Support Bot - A client support chatbot for Docket, a SaaS company serving roll-off dumpster and waste management businesses. Handles client questions via chat (and later email), pulls context from ChurnZero and Trello, and escalates to a human when needed.
+
+## Tech Stack
+- Backend: Node.js + Express (serves both API and static frontend)
+- Database: Supabase
+- AI: Claude API (Anthropic)
+- Integrations: ChurnZero, Trello, SendGrid
+- Hosting: Railway (single deployment)
+- Frontend: Vanilla HTML/CSS/JS (no React)
+
+## Non-Negotiables
+- Bot never says "As an AI" or acknowledges being a bot
+- Tone is friendly but firm, not overly apologetic
+- When client complains about delays, bot uses "receipts" — references actual emails sent and dates
+- Escalation goes to Kayla via email with full context
+- Simple and maintainable — this serves 50-80 users/month, don't over-engineer
+
+## What We Don't Want
+- No React or heavy frontend frameworks
+- No TypeScript
+- No unnecessary dependencies
+- No over-engineering
+- No splitting frontend/backend into separate deployments
+
+## Target Users
+Website clients (roll-off dumpster businesses) who ask repetitive questions, often about onboarding status or things already communicated via email. Many don't read their emails and then complain.
+
+## Key URLs
+- Chat will live at: support.yourdocketonline.com
+- Escalation emails go to: kayla@yourdocket.com
