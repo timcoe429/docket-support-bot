@@ -7,6 +7,20 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Unified Header -->
+    <header class="unified-header">
+        <div class="header-content">
+            <div class="header-logo">
+                <img src="https://www.yourdocket.com/wp-content/uploads/2024/11/highres-blue-docket-dumpster-software.png" alt="Docket Logo" id="headerLogo">
+            </div>
+            <h1 class="header-title">Docket Support Center</h1>
+            <div class="header-status">
+                <span class="online-dot"></span>
+                <span class="status-text">Online</span>
+            </div>
+        </div>
+    </header>
+
     <div class="support-container">
         <!-- FAQ Panel -->
         <aside class="faq-panel" id="faqPanel">
@@ -14,11 +28,11 @@
             <div class="faq-panel-content">
                 <!-- FAQ Header -->
                 <header class="faq-header">
-                    <div class="faq-logo">
-                        <img src="https://www.yourdocket.com/wp-content/uploads/2024/11/highres-blue-docket-dumpster-software.png" alt="Docket Logo" id="docketLogo">
-                    </div>
-                    <h1 class="faq-title">Support Center</h1>
                     <div class="faq-search-container">
+                        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
                         <input 
                             type="text" 
                             id="faqSearch" 
@@ -51,7 +65,6 @@
             <header class="chat-header">
                 <div class="chat-header-content">
                     <div class="chat-header-left">
-                        <img src="https://www.yourdocket.com/wp-content/uploads/2024/11/highres-blue-docket-dumpster-software.png" alt="Docket" class="chat-logo-small">
                         <h2 class="chat-title">Chat with Support</h2>
                     </div>
                     <div class="chat-status">
@@ -65,8 +78,11 @@
             <div class="messages-container" id="messagesContainer">
                 <!-- Initial state: Empty with prompt -->
                 <div class="chat-empty-state" id="chatEmptyState">
-                    <p class="empty-state-text">Have a question? Our support team is here to help.</p>
-                    <button class="start-chat-button" id="startChatButton">Start Chat</button>
+                    <div class="chat-welcome-icon">💬</div>
+                    <h2 class="welcome-title">👋 Hey there!</h2>
+                    <p class="welcome-subtitle">Our support team is online and ready to help you.</p>
+                    <button class="start-chat-button" id="startChatButton">Start a Conversation</button>
+                    <p class="response-time-indicator">💬 Typical response time: ~2 min</p>
                 </div>
             </div>
 
@@ -105,10 +121,10 @@
         <!-- Mobile Tab Navigation -->
         <nav class="mobile-tabs" id="mobileTabs">
             <button class="mobile-tab active" data-tab="faq" id="mobileTabFaq">
-                <span>FAQ</span>
+                <span>📚 FAQ</span>
             </button>
             <button class="mobile-tab" data-tab="chat" id="mobileTabChat">
-                <span>Chat</span>
+                <span>💬 Chat</span>
             </button>
         </nav>
     </div>

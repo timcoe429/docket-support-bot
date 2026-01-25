@@ -5,6 +5,17 @@ let chatConnected = false;
 let engagementState = 'none'; // 'none', 'faq', 'chat'
 let currentSearchTerm = '';
 
+// Category icon mapping
+const categoryIcons = {
+    'helpful-resources': '📚',
+    'basics': '🚀',
+    'faqs': '❓',
+    'changing-content': '✏️',
+    'adding-content': '➕',
+    'plugins-seo': '🔧',
+    'docketshop': '🛒'
+};
+
 // DOM elements
 const faqPanel = document.getElementById('faqPanel');
 const chatPanel = document.getElementById('chatPanel');
@@ -29,7 +40,7 @@ async function init() {
     setupEventListeners();
     
     // Handle logo loading errors
-    const logos = document.querySelectorAll('img[src*="docket"]');
+    const logos = document.querySelectorAll('img[src*="docket"], img[id*="Logo"], img[id*="logo"]');
     logos.forEach(img => {
         img.addEventListener('error', function() {
             this.style.display = 'none';
@@ -83,12 +94,19 @@ function renderFAQCategories(searchTerm = '') {
             categoryDiv.classList.add('expanded');
         }
         
+        const icon = categoryIcons[category.id] || '📄';
+        const itemCount = visibleItems.length;
+        
         const header = document.createElement('div');
         header.className = 'faq-category-header';
         header.innerHTML = `
-            <div>
-                <div class="faq-category-title">${category.name}</div>
-                ${category.description ? `<div class="faq-category-description">${category.description}</div>` : ''}
+            <div class="faq-category-header-left">
+                <div class="faq-category-icon">${icon}</div>
+                <div class="faq-category-info">
+                    <div class="faq-category-title">${category.name}</div>
+                    ${category.description ? `<div class="faq-category-description">${category.description}</div>` : ''}
+                    <span class="faq-category-badge">${itemCount} ${itemCount === 1 ? 'article' : 'articles'}</span>
+                </div>
             </div>
             <div class="faq-category-toggle">▼</div>
         `;
@@ -103,13 +121,23 @@ function renderFAQCategories(searchTerm = '') {
             
             const question = document.createElement('div');
             question.className = 'faq-question';
-            question.textContent = item.question;
+            
+            // Add arrow icon
+            const arrow = document.createElement('span');
+            arrow.className = 'faq-question-arrow';
+            arrow.textContent = '▶';
+            
+            const questionText = document.createElement('span');
+            questionText.textContent = item.question;
             
             // Highlight search terms
             if (currentSearchTerm) {
                 const regex = new RegExp(`(${escapeRegex(currentSearchTerm)})`, 'gi');
-                question.innerHTML = item.question.replace(regex, '<span class="highlight">$1</span>');
+                questionText.innerHTML = item.question.replace(regex, '<span class="highlight">$1</span>');
             }
+            
+            question.appendChild(arrow);
+            question.appendChild(questionText);
             
             const answer = document.createElement('div');
             answer.className = 'faq-answer';
