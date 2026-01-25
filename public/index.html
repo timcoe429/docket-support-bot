@@ -64,9 +64,6 @@
             <!-- Chat Header -->
             <header class="chat-header">
                 <div class="chat-header-content">
-                    <div class="chat-header-left">
-                        <h2 class="chat-title">Chat with Support</h2>
-                    </div>
                     <div class="chat-status">
                         <span class="status-dot"></span>
                         <span class="status-text">Online</span>
@@ -78,11 +75,22 @@
             <div class="messages-container" id="messagesContainer">
                 <!-- Initial state: Empty with prompt -->
                 <div class="chat-empty-state" id="chatEmptyState">
-                    <div class="chat-welcome-icon">💬</div>
-                    <h2 class="welcome-title">👋 Hey there!</h2>
-                    <p class="welcome-subtitle">Our support team is online and ready to help you.</p>
+                    <p class="welcome-subtitle">Our support team is here to help.</p>
+                    <div class="welcome-stats">
+                        <div class="welcome-stat">
+                            <span class="welcome-stat-dot"></span>
+                            <span>4 agents online</span>
+                        </div>
+                        <div class="welcome-stat">
+                            <span class="welcome-stat-dot empty"></span>
+                            <span>Currently helping 12 customers</span>
+                        </div>
+                        <div class="welcome-stat">
+                            <span class="welcome-stat-dot empty"></span>
+                            <span>Avg response time: under 2 min</span>
+                        </div>
+                    </div>
                     <button class="start-chat-button" id="startChatButton">Start a Conversation</button>
-                    <p class="response-time-indicator">💬 Typical response time: ~2 min</p>
                 </div>
             </div>
 
@@ -121,10 +129,10 @@
         <!-- Mobile Tab Navigation -->
         <nav class="mobile-tabs" id="mobileTabs">
             <button class="mobile-tab active" data-tab="faq" id="mobileTabFaq">
-                <span>📚 FAQ</span>
+                <span>FAQ</span>
             </button>
             <button class="mobile-tab" data-tab="chat" id="mobileTabChat">
-                <span>💬 Chat</span>
+                <span>Chat</span>
             </button>
         </nav>
     </div>

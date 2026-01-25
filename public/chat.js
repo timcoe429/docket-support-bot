@@ -5,15 +5,15 @@ let chatConnected = false;
 let engagementState = 'none'; // 'none', 'faq', 'chat'
 let currentSearchTerm = '';
 
-// Category icon mapping
+// Category icon mapping - removed emojis for professional look
 const categoryIcons = {
-    'helpful-resources': '📚',
-    'basics': '🚀',
-    'faqs': '❓',
-    'changing-content': '✏️',
-    'adding-content': '➕',
-    'plugins-seo': '🔧',
-    'docketshop': '🛒'
+    'helpful-resources': '',
+    'basics': '',
+    'faqs': '',
+    'changing-content': '',
+    'adding-content': '',
+    'plugins-seo': '',
+    'docketshop': ''
 };
 
 // DOM elements
@@ -67,10 +67,25 @@ function renderFAQCategories(searchTerm = '') {
     faqCategories.innerHTML = '';
     currentSearchTerm = searchTerm.toLowerCase();
     
+    // Map category IDs to resource IDs for highlighting
+    const resourceIdMap = {
+        'helpful-resources': 'helpful-resources',
+        'basics': 'basics-logging-in',
+        'faqs': 'faqs',
+        'changing-content': 'changing-content',
+        'adding-content': 'adding-content',
+        'plugins-seo': 'plugins-seo',
+        'docketshop': 'docketshop'
+    };
+    
     faqData.categories.forEach(category => {
         const categoryDiv = document.createElement('div');
-        categoryDiv.className = 'faq-category';
+        categoryDiv.className = 'faq-category resource-category';
         categoryDiv.dataset.categoryId = category.id;
+        
+        // Add resource ID for highlighting
+        const resourceId = resourceIdMap[category.id] || category.id;
+        categoryDiv.dataset.resourceId = resourceId;
         
         // Filter items based on search
         let visibleItems = category.items;
@@ -94,14 +109,12 @@ function renderFAQCategories(searchTerm = '') {
             categoryDiv.classList.add('expanded');
         }
         
-        const icon = categoryIcons[category.id] || '📄';
         const itemCount = visibleItems.length;
         
         const header = document.createElement('div');
         header.className = 'faq-category-header';
         header.innerHTML = `
             <div class="faq-category-header-left">
-                <div class="faq-category-icon">${icon}</div>
                 <div class="faq-category-info">
                     <div class="faq-category-title">${category.name}</div>
                     ${category.description ? `<div class="faq-category-description">${category.description}</div>` : ''}
@@ -329,17 +342,6 @@ function addAgentMessage(content, timestamp = null) {
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message agent-message';
     
-    const avatarDiv = document.createElement('div');
-    avatarDiv.className = 'agent-avatar';
-    const logoImg = document.createElement('img');
-    logoImg.src = 'https://www.yourdocket.com/wp-content/uploads/2024/11/highres-blue-docket-dumpster-software.png';
-    logoImg.alt = 'Docket';
-    logoImg.style.width = '20px';
-    logoImg.addEventListener('error', function() {
-        this.style.display = 'none';
-    });
-    avatarDiv.appendChild(logoImg);
-    
     const contentWrapper = document.createElement('div');
     contentWrapper.className = 'agent-message-content-wrapper';
     
@@ -354,7 +356,6 @@ function addAgentMessage(content, timestamp = null) {
     contentWrapper.appendChild(contentDiv);
     contentWrapper.appendChild(timeDiv);
     
-    messageDiv.appendChild(avatarDiv);
     messageDiv.appendChild(contentWrapper);
     
     messagesContainer.appendChild(messageDiv);
@@ -475,6 +476,32 @@ async function sendMessage(message) {
         messageInput.focus();
     }
 }
+
+// Resource highlighting function - available globally for API use
+function highlightResource(resourceId) {
+    // Remove any existing highlights
+    document.querySelectorAll('.resource-category').forEach(el => {
+        el.classList.remove('ai-highlighted');
+    });
+    
+    // Find and highlight the target
+    const target = document.querySelector(`[data-resource-id="${resourceId}"]`);
+    if (target) {
+        // Expand if collapsed
+        target.classList.add('expanded');
+        // Add highlight
+        target.classList.add('ai-highlighted');
+        // Scroll into view smoothly
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Remove highlight after 5 seconds
+        setTimeout(() => {
+            target.classList.remove('ai-highlighted');
+        }, 5000);
+    }
+}
+
+// Make highlightResource available globally
+window.highlightResource = highlightResource;
 
 // Initialize on page load
 if (document.readyState === 'loading') {
