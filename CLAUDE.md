@@ -1,3 +1,4 @@
+
 # AI Context - Start Here
 
 Before starting any work on this project, read these files in order:

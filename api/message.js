@@ -12,46 +12,82 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load FAQ data
-const faqPath = path.join(__dirname, '..', 'knowledge-base', 'faq.json');
-let faqData = [];
+const faqPath = path.join(process.cwd(), 'public', 'faq.json');
+let faqData = { categories: [] };
 
 try {
   const faqContent = fs.readFileSync(faqPath, 'utf-8');
   faqData = JSON.parse(faqContent);
 } catch (error) {
   console.error('Error loading FAQ data:', error);
-  faqData = [];
+  faqData = { categories: [] };
 }
 
 /**
- * Find matching FAQ based on keywords
+ * Find matching FAQ based on keywords and question text
+ * Searches through nested category structure
  */
 function findMatchingFAQ(message) {
   const messageLower = message.toLowerCase();
+  const messageWords = messageLower.split(/\s+/).filter(word => word.length > 2);
   
-  // Check each FAQ item
-  for (const faq of faqData) {
-    // Check if message contains any keywords
-    if (faq.keywords && Array.isArray(faq.keywords)) {
-      for (const keyword of faq.keywords) {
-        if (messageLower.includes(keyword.toLowerCase())) {
-          return faq;
-        }
-      }
+  let bestMatch = null;
+  let bestScore = 0;
+  
+  // Iterate through all categories
+  if (!faqData.categories || !Array.isArray(faqData.categories)) {
+    return null;
+  }
+  
+  for (const category of faqData.categories) {
+    if (!category.items || !Array.isArray(category.items)) {
+      continue;
     }
     
-    // Also check if message contains words from the question
-    const questionWords = faq.question.toLowerCase().split(/\s+/);
-    const matchingWords = questionWords.filter(word => 
-      word.length > 3 && messageLower.includes(word)
-    );
-    
-    if (matchingWords.length >= 2) {
-      return faq;
+    // Check each FAQ item in the category
+    for (const item of category.items) {
+      let score = 0;
+      
+      // Check keywords
+      if (item.keywords && Array.isArray(item.keywords)) {
+        for (const keyword of item.keywords) {
+          const keywordLower = keyword.toLowerCase();
+          if (messageLower.includes(keywordLower)) {
+            score += 2; // Keywords are weighted higher
+          }
+        }
+      }
+      
+      // Check question text
+      const questionLower = item.question.toLowerCase();
+      const questionWords = questionLower.split(/\s+/).filter(word => word.length > 2);
+      
+      // Count matching words
+      const matchingWords = questionWords.filter(qWord => 
+        messageWords.some(mWord => qWord.includes(mWord) || mWord.includes(qWord))
+      );
+      
+      score += matchingWords.length;
+      
+      // Exact phrase match gets bonus
+      if (messageLower.includes(questionLower) || questionLower.includes(messageLower)) {
+        score += 5;
+      }
+      
+      // Update best match if this score is higher
+      if (score > bestScore) {
+        bestScore = score;
+        bestMatch = {
+          ...item,
+          category: category.name,
+          categoryId: category.id
+        };
+      }
     }
   }
   
-  return null;
+  // Return match if score is at least 2 (meaningful match)
+  return bestScore >= 2 ? bestMatch : null;
 }
 
 /**
@@ -140,7 +176,8 @@ export default async function handler(req, res) {
         churnZero: churnZeroContext ? { account: churnZeroContext.account } : null,
         trello: trelloContext ? { activeProjects: trelloContext.activeProjects?.length || 0 } : null,
         knowledgeBase: knowledgeBaseResults.length,
-        faqMatched: faqMatch ? faqMatch.question : null
+        faqMatched: faqMatch ? faqMatch.question : null,
+        faqCategory: faqMatch ? faqMatch.category : null
       }
     );
 

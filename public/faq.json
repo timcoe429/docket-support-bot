@@ -1,0 +1,365 @@
+{
+  "categories": [
+    {
+      "id": "helpful-resources",
+      "name": "Helpful Resources",
+      "description": "View our website's Terms & Conditions, and learn more about your new WordPress website.",
+      "items": [
+        {
+          "id": "terms-conditions",
+          "question": "Website Terms & Conditions",
+          "answer": "If you ever want to review the terms & conditions of your Docket Website, please click <a href=\"https://www.yourdocket.com/terms-conditions-website/\">here</a>.",
+          "keywords": ["terms", "conditions", "legal", "agreement"]
+        },
+        {
+          "id": "marketing-resources",
+          "question": "Docket Customer Marketing Recommended Resources",
+          "answer": "<ul><li><a href=\"https://chatgpt.com/\">ChatGPT:</a> Ask AI directly to help you with your website questions. You can simply type \"I have a WordPress website and need to ______ using Elementor. Can you send me a step by step how-to?\"</li><li><a href=\"https://www.youtube.com/results?search_query=edit+wordpress+website+with+elementor+\">YouTube:</a> You can find many videos on YouTube and other platforms that walk you through edits.</li><li><a href=\"https://learning.yourdocket.com/learn\">Our Learning Hub:</a> We have an entire eLearning course dedicated to our self-managed websites in here that shows you how to accomplish simple edits. Let us know if you aren't signed up and we can assist you.</li></ul>",
+          "keywords": ["resources", "help", "learning", "youtube", "chatgpt", "tutorial"]
+        },
+        {
+          "id": "usage-reminders",
+          "question": "Website Usage Reminders",
+          "answer": "<ol><li>Your website is self-managed by you once it is launched. Our team can provide guidance if you have trouble with an edit, but we do not provide editing services.</li><li>We don't allow plugin installation on our websites to keep your website secure.</li><li>If there is an instance where you'd like our team's assistance, our team is available to assist at a rate of $175 per hour. Just let us know of the changes you'd like completed to your website and we can provide an estimate.</li><li>You'll need someone from our Docket Customer Marketing team to add any scripts to your website for Google Analytics or Docketshop.</li></ol>",
+          "keywords": ["self-managed", "plugins", "editing", "services", "rate", "price", "cost"]
+        },
+        {
+          "id": "website-dictionary",
+          "question": "Website Dictionary",
+          "answer": "<p>Here are some commonly used terms you should know when it comes to your website.</p><ul><li><strong>WordPress:</strong> A content management system (CMS) that allows users to create, manage, and publish websites and blogs easily. It is known for its user-friendly interface, flexibility, and is what your website is built on.</li><li><strong>Elementor:</strong> WordPress plugin that enables users to build custom web pages and websites using a drag-and-drop editor. It allows both beginners and advanced users to create visually appealing and responsive designs without needing to know how to code. This is what is used to edit your website.</li><li><strong>Widgets:</strong> In Elementor, widgets, also referred to as an 'element', are the basic building blocks used to add content and functionality to your pages. Examples include text boxes, image galleries, buttons, forms, and more.</li><li><strong>Sections:</strong> Sections are the largest building blocks in Elementor, used to organize your content horizontally.</li><li><strong>Columns:</strong> Columns are sub-divisions within sections, used to organize widgets vertically or in a grid.</li><li><strong>Responsive Mode:</strong> A feature that allows you to design and customize your website's layout for different device types—desktop, tablet, and mobile.</li><li><strong>Z-Index:</strong> Controls the stacking order of elements. Elements with a higher Z-Index value will appear in front of those with lower values.</li><li><strong>Padding & Margin:</strong> Padding is the space inside an element, between the content and its border. Margin is the space outside an element, between it and other elements.</li></ul>",
+          "keywords": ["wordpress", "elementor", "widgets", "sections", "columns", "responsive", "dictionary", "terms", "definitions"]
+        },
+        {
+          "id": "just-launched",
+          "question": "We just launched your website, now what?",
+          "answer": "<p>Here's a few things you'll need to know if we just launched your website:</p><ul><li>It will take time for Google to crawl and index your new website. If you don't see your website instantly appear when you Google your business name, don't freak out! This can take a few weeks or longer.</li></ul>",
+          "keywords": ["launched", "new", "google", "search", "index", "crawl"]
+        },
+        {
+          "id": "dont-want-website",
+          "question": "What if I don't want to use my Docket website anymore and have a different website?",
+          "answer": "<p><strong>You can let us know using the form at the bottom of this page that you don't want to use your Docket-created website, and we can schedule it to be deactivated.</strong></p><p>Since you own your website domain (the URL of your website), you have the ability to update your domain settings to point away from your Docket website at any time.</p><ol><li><strong>Log into your domain registrar:</strong> Examples are GoDaddy, Namecheap, Google Domains.</li><li><strong>Go to DNS Management:</strong> Look for a section labeled \"DNS,\" \"DNS Settings,\" or \"Manage DNS\".</li><li><strong>Remove old records:</strong> Delete any existing A, CNAME, or other records pointing to the old platform.</li><li><strong>Add new DNS records:</strong> Use the DNS details provided by the new website you wish to use.</li><li><strong>Save changes</strong></li><li><strong>Wait for propagation:</strong> It can take up to 24–48 hours for DNS changes to fully update.</li></ol>",
+          "keywords": ["cancel", "deactivate", "different website", "dns", "domain", "switch"]
+        }
+      ]
+    },
+    {
+      "id": "basics",
+      "name": "The Basics: Logging In and More",
+      "description": "Learn how to log in to your website, how to add new users, and what to do if you make a mistake.",
+      "items": [
+        {
+          "id": "how-to-login",
+          "question": "How do I login to my website?",
+          "answer": "<p>To login to your website and make any edits, you'll need to use the information given in your \"Docket Website is Live\" email.</p><ol><li>Login URL is always your website + /wp-admin<ul><li>Example: www.example.com/wp-admin</li></ul></li><li>Username is your first initial and last name<ul><li>Example: jdoe</li></ul></li><li>Default password that we set is your username + 123<ul><li>Example: jdoe123</li></ul></li></ol><p>Once you login to your website, you'll navigate to your Dashboard to make edits.</p>",
+          "keywords": ["login", "sign in", "access", "wp-admin", "username", "password", "dashboard"]
+        },
+        {
+          "id": "what-is-elementor",
+          "question": "What is Elementor?",
+          "answer": "<p>Elementor is used on your website to edit everything from content, images, pages, and more.</p><p><strong>How to use Elementor:</strong> <a href=\"https://elementor.com/help/elementor-editor/getting-around-the-elementor-editor/\">https://elementor.com/help/elementor-editor/getting-around-the-elementor-editor/</a></p><p>When you click Edit with Elementor on your website, you'll be able to add new elements (Widgets) to your website, including Buttons, Images, Icons, and more.</p>",
+          "keywords": ["elementor", "editor", "edit", "drag and drop", "widgets"]
+        },
+        {
+          "id": "forgot-password",
+          "question": "What if I forgot my password or username?",
+          "answer": "<p>You can reset your password by:</p><ol><li>Go to your website login page (your URL/wp-admin).</li><li>Click <u>Lost your password?</u> underneath the login screen.</li><li>Type in the email address or username associated with your website.</li><li>You'll receive a password reset link in the email associated with your website.</li><li>If the steps above don't work, please contact our Support team.</li></ol>",
+          "keywords": ["forgot", "password", "reset", "username", "lost", "recover"]
+        },
+        {
+          "id": "add-new-user",
+          "question": "How do I add a new user to my website?",
+          "answer": "<p>If you need to add a new user to your website, you can do so by following these steps:</p><ol><li>Login to your WordPress Dashboard.</li><li>Click 'Users' > 'Add New' on the left sidebar.</li><li>Fill in the required fields including the new user's email, username, and role (subscriber, contributor, author, editor, or administrator).</li><li>Click 'Add New User' at the bottom of the page.</li><li>Remember, only give administrative access to people you trust as they will have full access to your website's Dashboard.</li></ol>",
+          "keywords": ["add user", "new user", "users", "admin", "access", "permissions"]
+        },
+        {
+          "id": "undo-change",
+          "question": "How do I undo a change I did on my website if I already hit Update?",
+          "answer": "<p>Mistakes happen!</p><p>If you are editing your site and there is an error in your current update, you can go back to a previous version of your website.</p><p><strong>Please note that endless versions of your website aren't stored, so it is much easier to revert your website if the undesired change wasn't longer than a few 'Update' clicks away.</strong></p><ol><li>Login to your WordPress account.</li><li>On your Dashboard, click 'Pages' on the left sidebar.</li><li>Find the page you want to edit and click on 'Edit with Elementor'.</li><li>At the top of the left menu, click the large white circle button with the horizontal lines in the top left.</li><li>Click History, then click Revisions.</li><li>This will open your Page's History. Go to Revisions, and select the version of your website without the undesired change. Click Apply.</li><li>Once you're done, make sure to click 'Update' or 'Publish' to save your changes.</li></ol>",
+          "keywords": ["undo", "revert", "mistake", "history", "revisions", "previous version", "rollback"]
+        }
+      ]
+    },
+    {
+      "id": "faqs",
+      "name": "FAQ's",
+      "description": "Frequently asked questions from our customers.",
+      "items": [
+        {
+          "id": "dns-settings",
+          "question": "What if I need to update my DNS settings on my website?",
+          "answer": "<p><strong>Docket customers signed on before May of 2023:</strong> We will likely be the ones who can update your website DNS settings. Please reach out to our Support team and let them know what you need.</p><p><strong>Docket customers signed on after May of 2023:</strong> We do not manage your DNS settings. To find who hosts your domain:</p><ol><li>Go to <a href=\"https://www.whois.com/\">https://www.whois.com/</a></li><li>Type in your website's URL</li><li>You'll see your domain provider listed as the Registrar.</li><li>Go to the Registrar's website and login</li><li>You'll then be able to find your domain's DNS settings</li></ol>",
+          "keywords": ["dns", "domain", "settings", "registrar", "godaddy", "namecheap"]
+        },
+        {
+          "id": "track-visitors",
+          "question": "Do you track how many visitors come to my website?",
+          "answer": "<p>No.</p><p>If you'd like this information, you will need to set up a Google Analytics account and set up tracking (scroll down to the <strong>Plugins, SEO, and Website Analytics</strong> section to learn more).</p>",
+          "keywords": ["visitors", "traffic", "analytics", "track", "statistics"]
+        },
+        {
+          "id": "seo-optimization",
+          "question": "Do you optimize my website content for SEO for me?",
+          "answer": "<p>Our websites come with stock content by default, unless you provided our team with content you'd like us to use on your Website Submission Form.</p><p>This content is broad and is not optimized to your local market or specific business.</p><p>We recommend that you optimize your content yourself to target your local market with the help of Rank Math SEO.</p><p>We also complete on-page SEO for customers as included in our WebsiteVIP and Advanced SEO plans. <strong><a href=\"https://www.yourdocket.com/docket-premium-add-ons/\">Learn more here</a>.</strong></p>",
+          "keywords": ["seo", "optimize", "search", "ranking", "content", "local"]
+        },
+        {
+          "id": "changes-not-showing",
+          "question": "Why are my changes not showing even though I clicked Update?",
+          "answer": "<p>Caching is a technique used by websites to store and save frequently used data temporarily so that it can be quickly accessed.</p><p>When changes are made to a website, sometimes the cached version of the site is still being displayed instead of the updated version.</p><p>Giving the cache time to catch up ensures that the most recent version of the site is displayed. This can take a few minutes to a few hours.</p>",
+          "keywords": ["changes", "not showing", "cache", "update", "refresh", "display"]
+        },
+        {
+          "id": "undo-saved-change",
+          "question": "How do I undo a change I saved?",
+          "answer": "<p>Mistakes happen!</p><p>If you are editing your site and there is an error in your current update, you can go back to a previous version of your website using Revisions in Elementor.</p><ol><li>Login to your WordPress account.</li><li>On your Dashboard, click 'Pages' on the left sidebar.</li><li>Find the page you want to edit and click on 'Edit with Elementor'.</li><li>Click the menu button in the top left.</li><li>Click History, then click Revisions.</li><li>Select the version without the undesired change. Click Apply.</li><li>Click 'Update' to save your changes.</li></ol>",
+          "keywords": ["undo", "revert", "saved", "mistake", "history", "revisions"]
+        },
+        {
+          "id": "dont-want-self-manage",
+          "question": "What if I don't want to self-manage my website anymore?",
+          "answer": "<p>If you don't want to self-manage your website, we offer a WebsiteVIP upgrade for our customers. With WebsiteVIP, the Docket Customer Marketing Team will manage your website and give you unlimited edits on your content, as well as a few other exclusive features.</p><p><strong><a href=\"https://www.yourdocket.com/docket-premium-add-ons/\">Learn more here</a>.</strong></p>",
+          "keywords": ["self-manage", "managed", "websitevip", "upgrade", "help", "editing"]
+        }
+      ]
+    },
+    {
+      "id": "changing-content",
+      "name": "Changing Website Content",
+      "description": "Learn how to change content that is already on your website.",
+      "items": [
+        {
+          "id": "change-text-image",
+          "question": "How do I change text or an image already on my website?",
+          "answer": "<p><strong>To Edit Text on a Page:</strong></p><ol><li>Login to your WordPress account.</li><li>On your Dashboard, click 'Pages' on the left sidebar.</li><li>Find the page you want to edit and click on 'Edit with Elementor'.</li><li>Once inside Elementor, find the text box you'd like to edit.</li><li>Click on the pink pencil icon in the top right of the text box.</li><li>Make your changes in the left menu.</li><li>Click 'Update' to save your changes.</li></ol><p><strong>To Edit an Image:</strong></p><ol><li>Login to your WordPress Dashboard.</li><li>Click 'Pages' and find the page you want to edit.</li><li>Click on 'Edit with Elementor'.</li><li>Click on the image you want to change.</li><li>Click 'Choose your image' to replace the current one.</li><li>Click 'Update' to save your changes.</li></ol>",
+          "keywords": ["change", "edit", "text", "image", "photo", "content", "update"]
+        },
+        {
+          "id": "update-menu",
+          "question": "How do I update my website's menu in the header and footer?",
+          "answer": "<p><strong>You'll want to edit your website's menu anytime you add a new page to your website.</strong></p><ol><li>Login to your WordPress Dashboard.</li><li>Click on 'Appearance' > 'Menus' in the left sidebar.</li><li>From there, you can add or remove menu items (pages) and drag and drop to rearrange them.</li><li>Once you're done, click 'Save Menu'.</li></ol><p>Your website Footer will not automatically update, so you'll need to apply the changes to your Footer as well.</p>",
+          "keywords": ["menu", "header", "footer", "navigation", "pages", "links"]
+        },
+        {
+          "id": "dumpster-prices",
+          "question": "How do I change my dumpsters to show a price or other features?",
+          "answer": "<p><strong>Unless you had our team add the price of your dumpsters to your website during the build, this is not automatically on your website.</strong></p><p>To add a price to your dumpsters:</p><ol><li>Login to your WordPress account</li><li>On your Dashboard, click 'Pages'.</li><li>Find the page you want to edit and click on 'Edit with Elementor'.</li><li>Once inside Elementor, scroll to your dumpster.</li><li>In the left menu, search and add a Heading widget.</li><li>Type in your price.</li><li>Click Style to change the styling.</li><li>Click 'Update' to save your changes.</li></ol>",
+          "keywords": ["dumpster", "price", "pricing", "cost", "features"]
+        },
+        {
+          "id": "change-header-footer",
+          "question": "How do I change my Header or Footer?",
+          "answer": "<p><strong>To Edit Text in your Header/Footer:</strong></p><ol><li>Login to your WordPress Dashboard.</li><li>Click on 'Templates' > 'Theme Builder'.</li><li>Click on the 'Main Header' or 'Main Footer' section then click 'Edit'.</li><li>Make sure to check Responsive Mode to see how changes look on all devices.</li><li>Make your desired changes.</li><li>Click 'Update' to save your changes.</li></ol>",
+          "keywords": ["header", "footer", "template", "theme builder", "logo", "navigation"]
+        },
+        {
+          "id": "change-contact-form",
+          "question": "How do I change the form on my Contact page?",
+          "answer": "<p><strong>*THIS IS DONE IN DOCKET, NOT YOUR WEBSITE*</strong></p><p>The form on your Contact page is populated from your Docket account.</p><p><strong>To update the form:</strong></p><ol><li>Login to Docket.</li><li>Go to Forms.</li><li>Click Contact (Web) Form.</li><li>Alter fields as you wish.</li><li>Save your changes by clicking Update Form.</li></ol><p>Your changes will populate automatically on your website.</p>",
+          "keywords": ["contact", "form", "docket", "fields", "contact page"]
+        },
+        {
+          "id": "contact-page-image",
+          "question": "Can I change the image used on my Contact page?",
+          "answer": "<p><strong>To change the image beside your contact form:</strong></p><ol><li>While on the Contact page in Elementor, click the grey square in the upper right of the section.</li><li>In the left menu, go to Style.</li><li>Click Image, and select the image you'd like to use.</li><li>Under Image Resolution, select large.</li><li>For text visibility, go to Background Overlay and add a dark color with reduced opacity.</li><li>Click Update to save.</li></ol>",
+          "keywords": ["contact", "image", "photo", "background", "contact page"]
+        },
+        {
+          "id": "blog-featured-image",
+          "question": "How do I change the featured image on my blog posts?",
+          "answer": "<ol><li>Login to your WordPress account</li><li>On your Dashboard, click 'Posts'.</li><li>Find the blog post you want to edit and click on 'Edit'.</li><li>Scroll down to 'Featured Image' on the bottom right.</li><li>Click the image to add a new one.</li><li>Click 'Update' to save your changes.</li></ol>",
+          "keywords": ["blog", "featured image", "posts", "thumbnail"]
+        },
+        {
+          "id": "change-fonts",
+          "question": "How do I change the font used throughout my website?",
+          "answer": "<p><strong>If your website was built in 2024 or later, this is done in Global Fonts:</strong></p><ol><li>Login to your WordPress account.</li><li>On your Dashboard, click your website at the top.</li><li>Click Edit with Elementor.</li><li>Click the three lines in the top left to open Settings.</li><li>Click Site Settings.</li><li>Click Global Fonts.</li><li>Select your Primary, Secondary, Text, and Accent fonts.</li><li>Click Update to save.</li></ol><p>Note: These changes only impact text set to Default settings.</p>",
+          "keywords": ["font", "fonts", "typography", "text", "style", "global"]
+        },
+        {
+          "id": "change-colors",
+          "question": "How do I change the colors used throughout my website?",
+          "answer": "<p><strong>If your website was built in 2024 or later, this is done in Global Colors:</strong></p><ol><li>Login to your WordPress account.</li><li>Click Edit with Elementor on any page.</li><li>Click the three lines in the top left.</li><li>Click Site Settings.</li><li>Click Global Colors.</li><li>Select your Primary, Secondary, Text, and Accent colors.</li><li>Click Update to save.</li></ol>",
+          "keywords": ["color", "colors", "theme", "style", "global", "branding"]
+        },
+        {
+          "id": "change-buttons",
+          "question": "How do I change the text/link on any of the buttons on my website?",
+          "answer": "<ol><li>Login to your WordPress account</li><li>On your Dashboard, click 'Pages'.</li><li>Find the page where your button is and click 'Edit with Elementor'.</li><li>Turn on Responsive Mode.</li><li>Right-click the button and click Edit Button.</li><li>In the left menu, edit the text and link.</li><li>Click Style to change the styling.</li><li>Click 'Update' to save.</li></ol>",
+          "keywords": ["button", "buttons", "link", "text", "cta", "call to action"]
+        },
+        {
+          "id": "change-phone-banner",
+          "question": "How do I change my mobile phone number seen on the banner at the top of the screen?",
+          "answer": "<ol><li>Go to Pages, click Home page, then Edit with Elementor.</li><li>Click Edit with Elementor at top, then Edit Main Header.</li><li>Click the phone icon to open mobile version.</li><li>Click the Call Now section and edit the Icon List.</li><li>Change the phone number in both text AND link.</li><li>Click 'Update' to save.</li></ol>",
+          "keywords": ["phone", "mobile", "banner", "call", "header", "number"]
+        },
+        {
+          "id": "change-call-now-footer",
+          "question": "How do I change the mobile phone number linked to the bottom of my screen that says Call Now?",
+          "answer": "<ol><li>Go to Pages, click Home page, then Edit with Elementor.</li><li>Click Edit with Elementor, then Edit Main Footer.</li><li>Click the phone icon for mobile version.</li><li>Click the Call Now button in the footer.</li><li>Edit the phone number in the link area after \"tel:\".</li><li>Click 'Update' to save.</li></ol>",
+          "keywords": ["phone", "call now", "footer", "mobile", "number"]
+        },
+        {
+          "id": "change-testimonials",
+          "question": "How do I change the Testimonials/Google Reviews area on my website?",
+          "answer": "<ol><li>Login to your WordPress account.</li><li>On your Dashboard, click 'Pages'.</li><li>Navigate to the page with testimonials.</li><li>Right-click the testimonials section and click Edit Section.</li><li>Change the information in the left menu.</li><li>Click 'Update' to save.</li></ol><p>If testimonials are hidden (grayed out), go to Advanced > Responsive and un-click the Hide options.</p>",
+          "keywords": ["testimonials", "reviews", "google reviews", "feedback"]
+        }
+      ]
+    },
+    {
+      "id": "adding-content",
+      "name": "Adding New Website Content",
+      "description": "Learn how to add new content and elements to your website.",
+      "items": [
+        {
+          "id": "add-section",
+          "question": "How do I add a new Section to my website?",
+          "answer": "<ol><li>In Elementor, scroll to the bottom until you see 'Drag widget here'. Click the '+' icon.</li><li>Select the structure of your new Section.</li><li>Drag the Section to where you'd like it.</li><li>Click the '+' in the Section to add widgets.</li><li>Click 'Update' to save.</li></ol>",
+          "keywords": ["section", "add", "new", "layout", "structure"]
+        },
+        {
+          "id": "add-text",
+          "question": "How do I add a new text box to my website?",
+          "answer": "<p><strong>To add text in an existing Section:</strong></p><ol><li>In Elementor, search for Text Editor or Heading in the left menu.</li><li>Click and drag the element to where you want it.</li><li>Click the pink pencil icon to edit.</li><li>Make your changes in the left menu.</li><li>Click 'Update' to save.</li></ol>",
+          "keywords": ["text", "add", "heading", "paragraph", "content"]
+        },
+        {
+          "id": "add-photo",
+          "question": "How do I add a new photo to my website?",
+          "answer": "<p><strong>To add an image:</strong></p><ol><li>In Elementor, search for Image (or Image Carousel for multiple images).</li><li>Drag the element to your desired location.</li><li>Click 'Choose your image' to add an image.</li><li>Adjust settings in the left menu.</li><li>Click 'Update' to save.</li></ol>",
+          "keywords": ["photo", "image", "picture", "add", "gallery", "carousel"]
+        },
+        {
+          "id": "duplicate-page",
+          "question": "Is there a way I can duplicate a page or create a template?",
+          "answer": "<p><strong>If you see 'Duplicate This' option:</strong> Click it to duplicate the page.</p><p><strong>To save as template:</strong></p><ol><li>Edit the page with Elementor.</li><li>Click the '^' arrow beside Update.</li><li>Click Save as Template.</li><li>Name your template.</li></ol><p><strong>To use a template:</strong></p><ol><li>Edit the page with Elementor.</li><li>Click the '^' arrow, then Save as Template.</li><li>Click Library > My Templates.</li><li>Find your template and click Insert.</li></ol>",
+          "keywords": ["duplicate", "copy", "template", "clone", "page"]
+        },
+        {
+          "id": "add-faq",
+          "question": "How do I add an FAQ section to my website?",
+          "answer": "<p>The best widget for FAQ is the <strong>Toggle widget</strong>:</p><ol><li>In Elementor, search for 'Toggle'.</li><li>Drag it to where you want it.</li><li>Click Toggle #1 to edit the Title (question) and Content (answer).</li><li>Use the Style tab to customize colors and icons.</li><li>Click 'Update' to save.</li></ol>",
+          "keywords": ["faq", "questions", "answers", "toggle", "accordion"]
+        },
+        {
+          "id": "add-new-page",
+          "question": "How do I add a new page to my website?",
+          "answer": "<ol><li>Login to your WordPress Dashboard.</li><li>Click on 'Pages' > 'Add New'.</li><li>Create your new page.</li><li>To hide the page title: In Elementor, click the gear icon, then set Hide Page Title to 'Yes'.</li><li>Click 'Publish' to make it live.</li></ol><p>Remember to add the new page to your menu!</p>",
+          "keywords": ["page", "new page", "add", "create"]
+        },
+        {
+          "id": "add-google-reviews",
+          "question": "How do I add a Google Reviews section to my website?",
+          "answer": "<ol><li>In Elementor, navigate to where you want reviews.</li><li>Add a Testimonial Carousel widget.</li><li>Add each review under Item #1, #2, etc.</li><li>Include reviewer's name (Title can be removed if not needed).</li><li>Click 'Update' to save.</li></ol>",
+          "keywords": ["google", "reviews", "testimonials", "carousel", "ratings"]
+        },
+        {
+          "id": "add-blog-post",
+          "question": "How do I add a new Blog post?",
+          "answer": "<ol><li>Login to your WordPress account.</li><li>On your Dashboard, click 'Posts'.</li><li>Click Add New Post at the top.</li><li>Title your post and add content.</li><li>Your Table of Contents will auto-populate from H2 headings.</li><li>Click 'Publish' to make it live.</li></ol>",
+          "keywords": ["blog", "post", "article", "news", "content"]
+        },
+        {
+          "id": "add-lead-form",
+          "question": "How do I add a lead generation form to my website?",
+          "answer": "<p>Use Web forms in your Docket account:</p><ol><li>Login to Docket.</li><li>Go to Forms > New+ > Create Form > Web.</li><li>Add your details and Save.</li></ol><p><strong>To link a button to the form:</strong> Copy the URL from Docket and paste it in your button's Link field.</p><p><strong>To embed the form:</strong> Copy the Embedded URL from Docket and paste it in an HTML Widget in Elementor.</p>",
+          "keywords": ["form", "lead", "generation", "contact", "embed"]
+        }
+      ]
+    },
+    {
+      "id": "plugins-seo",
+      "name": "Plugins, SEO, and Website Analytics",
+      "description": "Information about our plugin policy, SEO optimization, and analytics.",
+      "items": [
+        {
+          "id": "add-plugin",
+          "question": "Can I add a new plugin to my website?",
+          "answer": "<p>We don't allow additional plugin installations on our websites, as we carefully test each plugin to ensure it doesn't impact your website's performance or our network's performance.</p><p>If you have a specific plugin in mind, please let our team know. We may already have suitable solutions in place.</p>",
+          "keywords": ["plugin", "install", "add", "extension"]
+        },
+        {
+          "id": "optimize-seo",
+          "question": "How can I optimize my website for SEO?",
+          "answer": "<p>You can do some generic on-page SEO using the <strong>Rank Math SEO plugin</strong> that is included on our websites.</p>",
+          "keywords": ["seo", "optimize", "search", "ranking", "rank math"]
+        },
+        {
+          "id": "setup-rank-math",
+          "question": "How do I set up Rank Math SEO on my website?",
+          "answer": "<ol><li>Login to your website.</li><li>In your Dashboard, click Rank Math SEO in the menu.</li><li>Click Setup Wizard.</li><li><strong>DO NOT UPGRADE YOUR ACCOUNT</strong> - the upgraded version is not compatible.</li><li>Select Easy, Advanced, or Custom Mode.</li><li>Skip the Google Services connection step.</li><li>Complete the setup.</li></ol><p>For support, visit <a href=\"https://rankmath.com/support/\">Rank Math Support</a>.</p>",
+          "keywords": ["rank math", "seo", "setup", "wizard", "configure"]
+        },
+        {
+          "id": "use-rank-math",
+          "question": "How do I use Rank Math SEO once it is set up?",
+          "answer": "<p><strong>To use on pages:</strong></p><ol><li>Go to Pages and Edit a page.</li><li>You'll see a Rank Math SEO section.</li><li>Click Edit Snippet and add your information.</li><li>Click Update.</li></ol><p><strong>For site-wide settings:</strong> Go to Rank Math SEO > Titles & Meta in your Dashboard.</p>",
+          "keywords": ["rank math", "seo", "use", "snippet", "meta"]
+        },
+        {
+          "id": "track-analytics",
+          "question": "How can I track website traffic and other analytics (Google Analytics)?",
+          "answer": "<p>We recommend setting up Google Analytics for accurate, in-depth information.</p><p>Start the process by following <a href=\"https://support.google.com/analytics/answer/9304153?hl=en\">Google's instructions</a>.</p>",
+          "keywords": ["analytics", "traffic", "google analytics", "visitors", "tracking"]
+        },
+        {
+          "id": "add-google-analytics",
+          "question": "How do I add Google Analytics to my website?",
+          "answer": "<p><strong>For DocketShop conversion tracking:</strong> Login to Docket > Online Booking > Website Scripts > Add your GA Measurement ID. Then let our team know to update your website script.</p><p><strong>For website analytics:</strong> Submit a request with your Google Analytics script and our team will add it for you.</p>",
+          "keywords": ["google analytics", "ga4", "tracking", "measurement id", "script"]
+        },
+        {
+          "id": "code-snippets",
+          "question": "What are code snippets?",
+          "answer": "<p>Because we have carefully selected plugins, you cannot add plugins to your site. However, you can use <strong>Code Snippets</strong> to add code in place of most plugin capabilities.</p><p>Code Snippets can be used for:</p><ul><li>Chatbots</li><li>Google Tag/Google Analytics</li><li>Facebook (Meta) Pixel</li><li>And more</li></p><p>If you can't use Code Snippets, submit a request and we'll add the script for you.</p>",
+          "keywords": ["code", "snippets", "scripts", "chatbot", "pixel", "tag"]
+        },
+        {
+          "id": "rank-higher-google",
+          "question": "I already set up Rank Math SEO, but I want to rank higher on Google. What do I do?",
+          "answer": "<p>Ranking higher on Google requires extensive long-term SEO strategy. We offer an <strong>Advanced SEO upgrade</strong> for our customers that uses white-hat SEO practices.</p><p><strong><a href=\"https://www.yourdocket.com/docket-premium-add-ons/\">Learn more here</a>.</strong></p>",
+          "keywords": ["rank", "higher", "google", "seo", "advanced", "upgrade"]
+        },
+        {
+          "id": "google-search-console",
+          "question": "I need to get Google Search Console added to my website",
+          "answer": "<p>First, set up Google Search Console in your Google account and add your website URL.</p><p>When you get to the step that asks for a meta tag, send that to our team using the contact form and we'll add it for you.</p><p>For help with Google Search Console setup, contact Google's Support team.</p>",
+          "keywords": ["google search console", "gsc", "webmaster", "meta tag", "verify"]
+        }
+      ]
+    },
+    {
+      "id": "docketshop",
+      "name": "DocketShop",
+      "description": "DocketShop is part of Docket's software. Learn how it works with your website!",
+      "items": [
+        {
+          "id": "what-is-docketshop",
+          "question": "What is DocketShop?",
+          "answer": "<p>DocketShop is Docket's straightforward, easy-to-use shopping cart for hassle-free dumpster rentals on your website.</p><p>It's directly connected to your Docket software through Online Booking, ensuring you're always updated on transactions and inventory.</p><p><strong>Without Online Booking:</strong> Book Now buttons link to your Contact page.</p><p><strong>With Online Booking:</strong> Book Now buttons link to DocketShop.</p>",
+          "keywords": ["docketshop", "shopping cart", "online booking", "ecommerce"]
+        },
+        {
+          "id": "add-remove-docketshop",
+          "question": "How do I add or remove DocketShop to my website?",
+          "answer": "<p>DocketShop is added to your website through a website script.</p><p>To add or remove DocketShop, please contact our Support Team, your Implementation Specialist, or our Docket Customer Marketing team.</p>",
+          "keywords": ["docketshop", "add", "remove", "install", "script"]
+        },
+        {
+          "id": "docketshop-analytics",
+          "question": "Can I track analytics from DocketShop?",
+          "answer": "<p>To view DocketShop analytics, you need to be on our <strong>Premium Plan</strong>.</p><p><strong>Docket – Insights/Sessions:</strong> See how customers book, when they abandon sessions, and more. Find this in Online Booking > Insights/Sessions.</p><p><strong>Google Analytics Tracking:</strong> Add your GA Measurement ID in Online Booking > Developer/Website Scripts, then let our team know to update your website script.</p>",
+          "keywords": ["docketshop", "analytics", "tracking", "insights", "premium"]
+        },
+        {
+          "id": "book-now-buttons-docketshop",
+          "question": "Does changing the text on my Book Now buttons mess up DocketShop?",
+          "answer": "<p><strong>Yes.</strong></p><p>If you change any Book Now button text and have DocketShop, you need to add the new text as a token in Online Booking:</p><ol><li>Login to Docket.</li><li>Go to Online Booking > Developer/Website Scripts.</li><li>Under Website Elements, add the new text to Webpage Phrases (add a comma after the last phrase, then your new text).</li><li>Let our team know to update your DocketShop script.</li></ol>",
+          "keywords": ["book now", "button", "docketshop", "token", "phrases"]
+        }
+      ]
+    }
+  ]
+}

@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vercel dev",
-    "build": "echo 'No build step required'",
+    "validate": "node scripts/validate.js",
+    "build": "npm run validate && echo 'Build validation passed'",
     "start": "vercel dev"
   },
   "keywords": [

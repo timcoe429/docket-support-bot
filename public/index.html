@@ -5,83 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Docket Support Center</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
     <div class="support-container">
-        <!-- Mobile Menu Toggle -->
-        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
-            <i data-lucide="menu"></i>
-        </button>
+        <!-- FAQ Panel -->
+        <aside class="faq-panel" id="faqPanel">
+            <div class="panel-toggle-overlay">Browse FAQ →</div>
+            <div class="faq-panel-content">
+                <!-- FAQ Header -->
+                <header class="faq-header">
+                    <div class="faq-logo">
+                        <img src="https://www.yourdocket.com/wp-content/uploads/2024/11/highres-blue-docket-dumpster-software.png" alt="Docket Logo" id="docketLogo">
+                    </div>
+                    <h1 class="faq-title">Support Center</h1>
+                    <div class="faq-search-container">
+                        <input 
+                            type="text" 
+                            id="faqSearch" 
+                            class="faq-search-input"
+                            placeholder="Search for help..."
+                            aria-label="Search FAQ"
+                        >
+                    </div>
+                </header>
 
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-content">
-                <!-- Logo -->
-                <div class="sidebar-logo">
-                    <svg width="120" height="32" viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <text x="0" y="24" font-family="system-ui, -apple-system" font-size="24" font-weight="600" fill="#009ce6">Docket</text>
-                    </svg>
+                <!-- FAQ Categories -->
+                <div class="faq-categories" id="faqCategories">
+                    <!-- Categories will be dynamically loaded here -->
                 </div>
 
-                <!-- Title -->
-                <h1 class="sidebar-title">Support Center</h1>
-
-                <!-- Quick Help Section -->
-                <div class="quick-help-section">
-                    <h2 class="section-heading">Quick Help</h2>
-                    <nav class="quick-help-links">
-                        <a href="#" class="quick-help-link" data-question="How do I update my business hours?">
-                            <i data-lucide="clock" class="link-icon"></i>
-                            <span>How do I update my business hours?</span>
-                        </a>
-                        <a href="#" class="quick-help-link" data-question="How do I add photos to my website?">
-                            <i data-lucide="image" class="link-icon"></i>
-                            <span>How do I add photos to my website?</span>
-                        </a>
-                        <a href="#" class="quick-help-link" data-question="How do I view my invoices?">
-                            <i data-lucide="file-text" class="link-icon"></i>
-                            <span>How do I view my invoices?</span>
-                        </a>
-                        <a href="#" class="quick-help-link" data-question="How do I reset my password?">
-                            <i data-lucide="key" class="link-icon"></i>
-                            <span>How do I reset my password?</span>
-                        </a>
-                        <a href="#" class="quick-help-link" data-question="How do I request a website change?">
-                            <i data-lucide="edit" class="link-icon"></i>
-                            <span>How do I request a website change?</span>
-                        </a>
-                    </nav>
-                </div>
-
-                <!-- Contact Section -->
-                <div class="contact-section">
-                    <h2 class="section-heading">Need to talk to someone?</h2>
-                    <p class="contact-text">Our team typically responds within a few hours</p>
-                </div>
-
-                <!-- Branding -->
-                <div class="sidebar-branding">
-                    <p class="branding-text">Powered by Docket</p>
-                </div>
+                <!-- FAQ Footer -->
+                <footer class="faq-footer">
+                    <p class="faq-footer-text">
+                        Can't find what you're looking for? 
+                        <a href="#" id="faq-chat-link" class="faq-footer-link">Chat with our team →</a>
+                    </p>
+                </footer>
             </div>
         </aside>
 
-        <!-- Backdrop for mobile -->
-        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
-
-        <!-- Main Chat Area -->
-        <main class="chat-area">
+        <!-- Chat Panel -->
+        <main class="chat-panel" id="chatPanel">
+            <div class="panel-toggle-overlay">Chat with Support →</div>
             <!-- Chat Header -->
             <header class="chat-header">
                 <div class="chat-header-content">
-                    <h2 class="chat-title">Chat with Docket Support</h2>
+                    <div class="chat-header-left">
+                        <img src="https://www.yourdocket.com/wp-content/uploads/2024/11/highres-blue-docket-dumpster-software.png" alt="Docket" class="chat-logo-small">
+                        <h2 class="chat-title">Chat with Support</h2>
+                    </div>
+                    <div class="chat-status">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Online</span>
+                    </div>
                 </div>
             </header>
 
             <!-- Messages Container -->
             <div class="messages-container" id="messagesContainer">
-                <!-- Bot greeting will be added here by JavaScript -->
+                <!-- Initial state: Empty with prompt -->
+                <div class="chat-empty-state" id="chatEmptyState">
+                    <p class="empty-state-text">Have a question? Our support team is here to help.</p>
+                    <button class="start-chat-button" id="startChatButton">Start Chat</button>
+                </div>
             </div>
 
             <!-- Typing Indicator -->
@@ -94,7 +80,7 @@
             </div>
 
             <!-- Input Container -->
-            <div class="input-container">
+            <div class="input-container" id="inputContainer" style="display: none;">
                 <form id="messageForm" class="message-form">
                     <input 
                         type="text" 
@@ -104,19 +90,29 @@
                         autocomplete="off"
                         required
                         aria-label="Message input"
+                        disabled
                     >
-                    <button type="submit" id="sendButton" class="send-button" aria-label="Send message">
-                        <i data-lucide="send"></i>
+                    <button type="submit" id="sendButton" class="send-button" aria-label="Send message" disabled>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
                     </button>
                 </form>
             </div>
         </main>
+
+        <!-- Mobile Tab Navigation -->
+        <nav class="mobile-tabs" id="mobileTabs">
+            <button class="mobile-tab active" data-tab="faq" id="mobileTabFaq">
+                <span>FAQ</span>
+            </button>
+            <button class="mobile-tab" data-tab="chat" id="mobileTabChat">
+                <span>Chat</span>
+            </button>
+        </nav>
     </div>
 
     <script src="chat.js"></script>
-    <script>
-        // Initialize Lucide icons
-        lucide.createIcons();
-    </script>
 </body>
 </html>
