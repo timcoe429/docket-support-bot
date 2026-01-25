@@ -2,9 +2,9 @@
 
 ## Architecture
 
-**Single Railway deployment vs split Vercel + Railway**
-- Chose: Single Railway deployment
-- Why: Only 50-80 users/month, splitting adds complexity for no benefit. Can split later if needed.
+**Vercel + Neon vs Railway + Supabase**
+- Chose: Vercel (free) + Neon (free)
+- Why: $0/month total. Serverless cold starts (~1s) acceptable for 50-80 users/month. Neon has good SQL editor. Can upgrade Vercel later if needed.
 
 **Vanilla JS vs React for frontend**
 - Chose: Vanilla HTML/CSS/JS

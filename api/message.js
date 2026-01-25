@@ -1,20 +1,21 @@
-import express from 'express';
-import { getSession } from '../db/supabase.js';
-import { getActiveConversation, createConversation, addMessage, getConversationMessages, updateConversationStatus } from '../db/supabase.js';
-import { getAccountContext } from '../integrations/churnzero.js';
-import { getClientProjectStatus } from '../integrations/trello.js';
-import { generateResponse, shouldEscalate as claudeShouldEscalate } from '../integrations/claude.js';
-import { searchKnowledgeBase } from '../db/supabase.js';
-import { shouldEscalate, getEscalationReason } from '../utils/escalation.js';
-import { sendEscalationEmail } from '../integrations/email.js';
-
-const router = express.Router();
+import { getSession } from '../lib/db.js';
+import { getActiveConversation, createConversation, addMessage, getConversationMessages, updateConversationStatus } from '../lib/db.js';
+import { getAccountContext } from '../lib/churnzero.js';
+import { getClientProjectStatus } from '../lib/trello.js';
+import { generateResponse, shouldEscalate as claudeShouldEscalate } from '../lib/claude.js';
+import { searchKnowledgeBase } from '../lib/db.js';
+import { shouldEscalate } from '../lib/escalation.js';
+import { sendEscalationEmail } from '../lib/email.js';
 
 /**
  * POST /api/message
  * Handle chat messages, pull context, generate responses
  */
-router.post('/', async (req, res) => {
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   try {
     const { sessionId, message } = req.body;
 
@@ -177,6 +178,4 @@ router.post('/', async (req, res) => {
       message: error.message
     });
   }
-});
-
-export default router;
+}

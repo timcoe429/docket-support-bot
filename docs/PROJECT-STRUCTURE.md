@@ -6,42 +6,49 @@ Docket Support Bot - A client support chatbot that handles repetitive questions,
 ## Directory Layout
 ```
 /docket-support-bot
-├── /docs                    # Documentation
-├── /src                     # Backend source code
-│   ├── /api                 # API route handlers
-│   ├── /integrations        # External service connections
-│   ├── /db                  # Database client and queries
-│   └── /utils               # Helper functions
-├── /public                  # Frontend static files
-├── /knowledge-base          # FAQ and documentation content
+├── /api                    # Vercel serverless functions
+│   ├── message.js          # POST /api/message
+│   ├── verify.js           # POST /api/verify
+│   └── escalate.js         # POST /api/escalate
+├── /lib                    # Shared code
+│   ├── db.js               # Neon database client
+│   ├── churnzero.js        # ChurnZero integration
+│   ├── trello.js           # Trello integration
+│   ├── claude.js           # Claude API integration
+│   ├── email.js            # SendGrid integration
+│   ├── escalation.js       # Escalation detection logic
+│   └── formatter.js        # Helper formatting functions
+├── /public                 # Frontend static files
+├── /knowledge-base         # FAQ and documentation content
+├── /docs                   # Documentation
+├── /ai                     # AI context and planning docs
 └── Configuration files
 ```
 
 ## Core Components
 
-### Backend (/src)
-
-**server.js**
-- Express app entry point
-- Serves static files from /public
-- Mounts API routes
-
-**api/message.js**
-- Main chat endpoint
-- Receives messages, pulls context, generates responses
-- Stores conversation history
+### Backend (/api)
 
 **api/verify.js**
-- Email verification endpoint
+- Email verification endpoint (Vercel serverless function)
 - Checks email against ChurnZero primary contact
 - Creates verified session
 
+**api/message.js**
+- Main chat endpoint (Vercel serverless function)
+- Receives messages, pulls context, generates responses
+- Stores conversation history
+
 **api/escalate.js**
-- Handles escalation flow
+- Escalation endpoint (Vercel serverless function)
 - Sends email to Kayla with full context
 - Updates conversation status
 
-### Integrations (/src/integrations)
+### Shared Code (/lib)
+
+**db.js**
+- Neon database client
+- Database helper functions (conversations, messages, sessions, knowledge base)
 
 **churnzero.js**
 - Get client by email
@@ -59,6 +66,15 @@ Docket Support Bot - A client support chatbot that handles repetitive questions,
 **email.js**
 - SendGrid integration
 - Sends escalation emails
+
+**escalation.js**
+- Escalation keyword detection
+- Sentiment analysis
+- Profanity detection
+
+**formatter.js**
+- Context formatting utilities
+- Date formatting helpers
 
 ### Frontend (/public)
 
@@ -78,7 +94,7 @@ Docket Support Bot - A client support chatbot that handles repetitive questions,
 
 ### Database
 
-**Supabase Tables:**
+**Neon Postgres Tables:**
 - conversations - Chat session records
 - messages - Individual messages
 - sessions - Verification sessions
@@ -90,5 +106,5 @@ Docket Support Bot - A client support chatbot that handles repetitive questions,
 2. Client sends message → /api/message receives it
 3. Backend pulls ChurnZero + Trello context
 4. Claude generates response with context
-5. Response stored in Supabase, returned to client
+5. Response stored in Neon, returned to client
 6. If escalation triggered → /api/escalate sends email to Kayla

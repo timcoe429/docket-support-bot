@@ -2,8 +2,9 @@
 
 ## Prerequisites
 - Node.js 18+
-- Supabase account
+- Neon account (free tier available)
 - API keys for: ChurnZero, Trello, Anthropic (Claude), SendGrid
+- Vercel account (free tier available)
 
 ## Local Setup
 
@@ -21,8 +22,7 @@ cp .env.example .env
 ```
 
 Required variables:
-- SUPABASE_URL
-- SUPABASE_ANON_KEY
+- DATABASE_URL (Neon connection string)
 - CHURNZERO_API_KEY
 - CHURNZERO_APP_KEY
 - TRELLO_API_KEY
@@ -31,8 +31,8 @@ Required variables:
 - SENDGRID_API_KEY
 - ESCALATION_EMAIL
 
-### 3. Supabase Setup
-Run these SQL commands in your Supabase SQL editor:
+### 3. Neon Database Setup
+Run these SQL commands in your Neon SQL editor:
 ```sql
 -- Conversations table
 CREATE TABLE conversations (
@@ -77,26 +77,26 @@ CREATE TABLE knowledge_base (
 ```bash
 npm run dev
 ```
-App runs at http://localhost:3000
+App runs at http://localhost:3000 (Vercel dev server)
 
 ### 5. Test the Flow
 1. Open http://localhost:3000
 2. Enter a test email
 3. Send a message
-4. Check Supabase tables for data
+4. Check Neon database tables for data
 
-## Deployment (Railway)
+## Deployment (Vercel)
 
 1. Push code to GitHub
-2. Create new Railway project
+2. Import project in Vercel dashboard
 3. Connect to your GitHub repo
-4. Add environment variables in Railway settings
-5. Deploy
-6. Point support.yourdocketonline.com DNS to Railway URL
+4. Add environment variables in Vercel project settings
+5. Deploy (automatic on push to main branch)
+6. Point support.yourdocketonline.com DNS to Vercel URL
 
 ## Adding Knowledge Base Content
 
-Edit /knowledge-base/faq.json or insert directly into Supabase:
+Edit /knowledge-base/faq.json or insert directly into Neon database:
 ```json
 {
   "question": "How do I update my business hours?",

@@ -1,14 +1,15 @@
-import express from 'express';
-import { verifyEmailIsPrimaryContact } from '../integrations/churnzero.js';
-import { createSession, verifySession } from '../db/supabase.js';
-
-const router = express.Router();
+import { verifyEmailIsPrimaryContact } from '../lib/churnzero.js';
+import { createSession } from '../lib/db.js';
 
 /**
  * POST /api/verify
  * Verify client email against ChurnZero primary contact
  */
-router.post('/', async (req, res) => {
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   try {
     const { email } = req.body;
 
@@ -48,6 +49,4 @@ router.post('/', async (req, res) => {
       message: error.message
     });
   }
-});
-
-export default router;
+}

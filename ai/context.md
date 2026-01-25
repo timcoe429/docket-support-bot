@@ -4,11 +4,10 @@
 Docket Support Bot - A client support chatbot for Docket, a SaaS company serving roll-off dumpster and waste management businesses. Handles client questions via chat (and later email), pulls context from ChurnZero and Trello, and escalates to a human when needed.
 
 ## Tech Stack
-- Backend: Node.js + Express (serves both API and static frontend)
-- Database: Supabase
+- Hosting: Vercel (serverless functions + static hosting)
+- Database: Neon (serverless Postgres)
 - AI: Claude API (Anthropic)
 - Integrations: ChurnZero, Trello, SendGrid
-- Hosting: Railway (single deployment)
 - Frontend: Vanilla HTML/CSS/JS (no React)
 
 ## Non-Negotiables

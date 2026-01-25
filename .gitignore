@@ -2,5 +2,6 @@ node_modules/
 .env
 .DS_Store
 *.log
-
+.env
+.env.local
 # Do NOT ignore /ai folder - we want this in version control
