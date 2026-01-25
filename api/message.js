@@ -1,15 +1,62 @@
-import { getSession } from '../lib/db.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { getActiveConversation, createConversation, addMessage, getConversationMessages, updateConversationStatus } from '../lib/db.js';
 import { getAccountContext } from '../lib/churnzero.js';
-import { getClientProjectStatus } from '../lib/trello.js';
-import { generateResponse, shouldEscalate as claudeShouldEscalate } from '../lib/claude.js';
+import { getClientProjectStatus, createSupportCard } from '../lib/trello.js';
 import { searchKnowledgeBase } from '../lib/db.js';
 import { shouldEscalate } from '../lib/escalation.js';
-import { sendEscalationEmail } from '../lib/email.js';
+
+// Get current directory for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load FAQ data
+const faqPath = path.join(__dirname, '..', 'knowledge-base', 'faq.json');
+let faqData = [];
+
+try {
+  const faqContent = fs.readFileSync(faqPath, 'utf-8');
+  faqData = JSON.parse(faqContent);
+} catch (error) {
+  console.error('Error loading FAQ data:', error);
+  faqData = [];
+}
+
+/**
+ * Find matching FAQ based on keywords
+ */
+function findMatchingFAQ(message) {
+  const messageLower = message.toLowerCase();
+  
+  // Check each FAQ item
+  for (const faq of faqData) {
+    // Check if message contains any keywords
+    if (faq.keywords && Array.isArray(faq.keywords)) {
+      for (const keyword of faq.keywords) {
+        if (messageLower.includes(keyword.toLowerCase())) {
+          return faq;
+        }
+      }
+    }
+    
+    // Also check if message contains words from the question
+    const questionWords = faq.question.toLowerCase().split(/\s+/);
+    const matchingWords = questionWords.filter(word => 
+      word.length > 3 && messageLower.includes(word)
+    );
+    
+    if (matchingWords.length >= 2) {
+      return faq;
+    }
+  }
+  
+  return null;
+}
 
 /**
  * POST /api/message
- * Handle chat messages, pull context, generate responses
+ * Handle chat messages, return FAQ answers or placeholder responses
  */
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -17,34 +64,16 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { sessionId, message } = req.body;
+    const { message } = req.body;
 
-    if (!sessionId || !message) {
-      return res.status(400).json({ error: 'Session ID and message are required' });
+    if (!message) {
+      return res.status(400).json({ error: 'Message is required' });
     }
 
-    // Get session
-    const session = await getSession(sessionId);
-    
-    if (!session) {
-      return res.status(404).json({ error: 'Session not found' });
-    }
-
-    if (!session.verified) {
-      return res.status(403).json({ error: 'Session not verified' });
-    }
-
-    // Check if session expired
-    if (new Date(session.expires_at) < new Date()) {
-      return res.status(403).json({ error: 'Session expired. Please verify again.' });
-    }
-
-    const clientEmail = session.client_email;
-
-    // Get or create conversation
-    let conversation = await getActiveConversation(clientEmail);
+    // Create or get conversation (using anonymous email)
+    let conversation = await getActiveConversation('anonymous');
     if (!conversation) {
-      conversation = await createConversation(clientEmail);
+      conversation = await createConversation('anonymous');
     }
 
     // Check for escalation triggers in user message
@@ -60,20 +89,19 @@ export default async function handler(req, res) {
     // Add user message to database
     await addMessage(conversation.id, 'user', message);
 
-    // Pull context from ChurnZero and Trello
+    // Try to get context (stubbed for now)
     let churnZeroContext = null;
     let trelloContext = null;
     let knowledgeBaseResults = [];
 
     try {
-      churnZeroContext = await getAccountContext(clientEmail);
+      churnZeroContext = await getAccountContext('anonymous');
     } catch (error) {
       console.error('Error fetching ChurnZero context:', error);
     }
 
     try {
-      const accountName = churnZeroContext?.account?.name || clientEmail;
-      trelloContext = await getClientProjectStatus(accountName, clientEmail);
+      trelloContext = await getClientProjectStatus('Test Account', 'anonymous');
     } catch (error) {
       console.error('Error fetching Trello context:', error);
     }
@@ -84,46 +112,22 @@ export default async function handler(req, res) {
       console.error('Error searching knowledge base:', error);
     }
 
-    // Get conversation history
-    const conversationHistory = await getConversationMessages(conversation.id);
-
-    // Prepare context for Claude
-    const context = {
-      churnZero: churnZeroContext,
-      trello: trelloContext,
-      knowledgeBase: knowledgeBaseResults
-    };
-
-    // Generate response using Claude
+    // Generate response
     let botResponse = '';
-    let claudeEscalation = false;
+    let faqMatch = null;
 
     if (escalationTriggered) {
       // If escalation triggered, respond with escalation message
       botResponse = "Let me get Kayla to help with this - she'll follow up with you shortly.";
     } else {
-      try {
-        const claudeResponse = await generateResponse(
-          message,
-          conversationHistory.map(msg => ({
-            role: msg.role,
-            content: msg.content
-          })),
-          context
-        );
-
-        botResponse = claudeResponse.response;
-        claudeEscalation = claudeShouldEscalate(botResponse);
-
-        if (claudeEscalation) {
-          escalationTriggered = true;
-          escalationReason = 'Claude detected escalation need';
-        }
-      } catch (error) {
-        console.error('Error generating Claude response:', error);
-        botResponse = "I'm having trouble processing that right now. Let me get Kayla to help with this - she'll follow up with you shortly.";
-        escalationTriggered = true;
-        escalationReason = 'Claude API error';
+      // Check FAQ first
+      faqMatch = findMatchingFAQ(message);
+      
+      if (faqMatch) {
+        botResponse = faqMatch.answer;
+      } else {
+        // Placeholder response
+        botResponse = "I'm looking into that. For now, this is a test response.";
       }
     }
 
@@ -135,33 +139,34 @@ export default async function handler(req, res) {
       {
         churnZero: churnZeroContext ? { account: churnZeroContext.account } : null,
         trello: trelloContext ? { activeProjects: trelloContext.activeProjects?.length || 0 } : null,
-        knowledgeBase: knowledgeBaseResults.length
+        knowledgeBase: knowledgeBaseResults.length,
+        faqMatched: faqMatch ? faqMatch.question : null
       }
     );
 
-    // Handle escalation
+    // Handle escalation - create Trello card
     if (escalationTriggered) {
       await updateConversationStatus(conversation.id, 'escalated', escalationReason);
 
-      // Send escalation email
+      // Get full conversation history for the card
+      const conversationHistory = await getConversationMessages(conversation.id);
+
       try {
-        await sendEscalationEmail({
-          clientEmail,
+        const card = await createSupportCard({
+          clientEmail: 'anonymous',
           conversationId: conversation.id,
           escalationReason,
-          conversationHistory: conversationHistory.concat([{
-            role: 'user',
-            content: message
-          }, {
-            role: 'assistant',
-            content: botResponse
-          }]),
+          conversationHistory: conversationHistory.concat([
+            { role: 'user', content: message },
+            { role: 'assistant', content: botResponse }
+          ]),
           churnZeroContext,
           trelloContext
         });
+        console.log('Support card created:', card.id);
       } catch (error) {
-        console.error('Error sending escalation email:', error);
-        // Don't fail the request if email fails
+        console.error('Error creating Trello card:', error);
+        // Don't fail the request if card creation fails
       }
     }
 

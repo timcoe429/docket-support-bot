@@ -1,8 +1,7 @@
 import { getSession } from '../lib/db.js';
 import { getActiveConversation, getConversationMessages, updateConversationStatus } from '../lib/db.js';
 import { getAccountContext } from '../lib/churnzero.js';
-import { getClientProjectStatus } from '../lib/trello.js';
-import { sendEscalationEmail } from '../lib/email.js';
+import { getClientProjectStatus, createSupportCard } from '../lib/trello.js';
 
 /**
  * POST /api/escalate
@@ -64,22 +63,20 @@ export default async function handler(req, res) {
     const escalationReason = reason || 'Manual escalation requested';
     await updateConversationStatus(conversation.id, 'escalated', escalationReason);
 
-    // Send escalation email
+    // Create Trello support card
     try {
-      await sendEscalationEmail({
-        clientEmail,
+      const card = await createSupportCard({
+        clientEmail: clientEmail || 'anonymous',
         conversationId: conversation.id,
         escalationReason,
         conversationHistory,
         churnZeroContext,
         trelloContext
       });
+      console.log('Support card created:', card.id);
     } catch (error) {
-      console.error('Error sending escalation email:', error);
-      return res.status(500).json({
-        error: 'Failed to send escalation email',
-        message: error.message
-      });
+      console.error('Error creating Trello card:', error);
+      // Don't fail the request if card creation fails
     }
 
     res.json({

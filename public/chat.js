@@ -1,79 +1,88 @@
 // Chat application state
-let sessionId = null;
-let clientEmail = null;
 let conversationId = null;
 
 // DOM elements
-const verificationScreen = document.getElementById('verificationScreen');
-const chatScreen = document.getElementById('chatScreen');
-const verificationForm = document.getElementById('verificationForm');
-const emailInput = document.getElementById('emailInput');
-const verifyButton = document.getElementById('verifyButton');
-const verificationError = document.getElementById('verificationError');
+const sidebar = document.getElementById('sidebar');
+const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+const mobileMenuToggle = document.getElementById('mobileMenuToggle');
 const messageForm = document.getElementById('messageForm');
 const messageInput = document.getElementById('messageInput');
 const sendButton = document.getElementById('sendButton');
 const messagesContainer = document.getElementById('messagesContainer');
-const loadingIndicator = document.getElementById('loadingIndicator');
-const closeButton = document.getElementById('closeButton');
+const typingIndicator = document.getElementById('typingIndicator');
+const quickHelpLinks = document.querySelectorAll('.quick-help-link');
 
-// Check for existing session in localStorage
-function loadSession() {
-    const savedSessionId = localStorage.getItem('docketSessionId');
-    const savedEmail = localStorage.getItem('docketClientEmail');
-    const savedExpiry = localStorage.getItem('docketSessionExpiry');
-
-    if (savedSessionId && savedEmail && savedExpiry) {
-        // Check if session is still valid (not expired)
-        if (new Date(savedExpiry) > new Date()) {
-            sessionId = savedSessionId;
-            clientEmail = savedEmail;
-            showChatScreen();
-            return true;
-        } else {
-            // Clear expired session
-            clearSession();
-        }
-    }
-    return false;
-}
-
-// Save session to localStorage
-function saveSession(sessionIdValue, email, expiresAt) {
-    localStorage.setItem('docketSessionId', sessionIdValue);
-    localStorage.setItem('docketClientEmail', email);
-    localStorage.setItem('docketSessionExpiry', expiresAt);
-}
-
-// Clear session from localStorage
-function clearSession() {
-    localStorage.removeItem('docketSessionId');
-    localStorage.removeItem('docketClientEmail');
-    localStorage.removeItem('docketSessionExpiry');
-    sessionId = null;
-    clientEmail = null;
-    conversationId = null;
-}
-
-// Show verification screen
-function showVerificationScreen() {
-    verificationScreen.style.display = 'block';
-    chatScreen.style.display = 'none';
-    verificationError.classList.remove('show');
-    emailInput.value = '';
-}
-
-// Show chat screen
-function showChatScreen() {
-    verificationScreen.style.display = 'none';
-    chatScreen.style.display = 'flex';
+// Initialize
+function init() {
+    // Show bot greeting
+    addBotGreeting();
+    
+    // Set up event listeners
+    setupEventListeners();
+    
+    // Focus input
     messageInput.focus();
 }
 
-// Show error message
-function showError(message) {
-    verificationError.textContent = message;
-    verificationError.classList.add('show');
+// Bot greeting
+function addBotGreeting() {
+    addMessage("Hi! How can I help you today?", 'assistant');
+}
+
+// Set up event listeners
+function setupEventListeners() {
+    // Message form submission
+    messageForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const message = messageInput.value.trim();
+        if (message) {
+            messageInput.value = '';
+            await sendMessage(message);
+        }
+    });
+
+    // Quick help links
+    quickHelpLinks.forEach(link => {
+        link.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const question = link.getAttribute('data-question');
+            if (question) {
+                // Close mobile menu if open
+                closeMobileMenu();
+                await sendMessage(question);
+            }
+        });
+    });
+
+    // Mobile menu toggle
+    if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+    }
+
+    // Close menu on backdrop click
+    if (sidebarBackdrop) {
+        sidebarBackdrop.addEventListener('click', closeMobileMenu);
+    }
+
+    // Close menu on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+            closeMobileMenu();
+        }
+    });
+}
+
+// Mobile menu functions
+function toggleMobileMenu() {
+    sidebar.classList.toggle('open');
+    sidebarBackdrop.classList.toggle('active');
+    document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+}
+
+function closeMobileMenu() {
+    sidebar.classList.remove('open');
+    sidebarBackdrop.classList.remove('active');
+    document.body.style.overflow = '';
 }
 
 // Add message to chat
@@ -81,19 +90,49 @@ function addMessage(content, role, timestamp = null) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${role}-message`;
 
-    const contentDiv = document.createElement('div');
-    contentDiv.className = 'message-content';
-    contentDiv.textContent = content;
-
-    const timeDiv = document.createElement('div');
-    timeDiv.className = 'message-time';
-    timeDiv.textContent = timestamp || formatTime(new Date());
-
-    messageDiv.appendChild(contentDiv);
-    messageDiv.appendChild(timeDiv);
+    if (role === 'assistant') {
+        // Bot message with avatar
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'bot-avatar';
+        avatarDiv.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>';
+        
+        const contentWrapper = document.createElement('div');
+        contentWrapper.className = 'bot-message-content-wrapper';
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        contentDiv.textContent = content;
+        
+        const timeDiv = document.createElement('div');
+        timeDiv.className = 'message-time';
+        timeDiv.textContent = timestamp || formatTime(new Date());
+        
+        contentWrapper.appendChild(contentDiv);
+        contentWrapper.appendChild(timeDiv);
+        
+        messageDiv.appendChild(avatarDiv);
+        messageDiv.appendChild(contentWrapper);
+    } else {
+        // User message
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        contentDiv.textContent = content;
+        
+        const timeDiv = document.createElement('div');
+        timeDiv.className = 'message-time';
+        timeDiv.textContent = timestamp || formatTime(new Date());
+        
+        messageDiv.appendChild(contentDiv);
+        messageDiv.appendChild(timeDiv);
+    }
 
     messagesContainer.appendChild(messageDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    scrollToBottom();
+    
+    // Re-initialize Lucide icons for new SVG elements
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
 }
 
 // Format time
@@ -104,73 +143,43 @@ function formatTime(date) {
     });
 }
 
-// Show loading indicator
+// Show typing indicator
+function showTypingIndicator() {
+    typingIndicator.style.display = 'block';
+    scrollToBottom();
+}
+
+// Hide typing indicator
+function hideTypingIndicator() {
+    typingIndicator.style.display = 'none';
+}
+
+// Show loading state
 function showLoading() {
-    loadingIndicator.style.display = 'block';
     sendButton.disabled = true;
     messageInput.disabled = true;
+    showTypingIndicator();
 }
 
-// Hide loading indicator
+// Hide loading state
 function hideLoading() {
-    loadingIndicator.style.display = 'none';
     sendButton.disabled = false;
     messageInput.disabled = false;
+    hideTypingIndicator();
 }
 
-// Verify email
-async function verifyEmail(email) {
-    try {
-        verifyButton.disabled = true;
-        verificationError.classList.remove('show');
-
-        const response = await fetch('/api/verify', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email })
+// Scroll to bottom smoothly
+function scrollToBottom() {
+    setTimeout(() => {
+        messagesContainer.scrollTo({
+            top: messagesContainer.scrollHeight,
+            behavior: 'smooth'
         });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            showError(data.message || data.error || 'Verification failed');
-            return false;
-        }
-
-        if (data.verified) {
-            sessionId = data.sessionId;
-            clientEmail = email;
-            
-            // Save session (expires in 24 hours)
-            const expiresAt = new Date();
-            expiresAt.setHours(expiresAt.getHours() + 24);
-            saveSession(sessionId, clientEmail, expiresAt.toISOString());
-
-            showChatScreen();
-            return true;
-        } else {
-            showError(data.message || 'Email verification failed');
-            return false;
-        }
-    } catch (error) {
-        console.error('Verification error:', error);
-        showError('Network error. Please try again.');
-        return false;
-    } finally {
-        verifyButton.disabled = false;
-    }
+    }, 100);
 }
 
 // Send message
 async function sendMessage(message) {
-    if (!sessionId) {
-        showError('Session expired. Please verify again.');
-        showVerificationScreen();
-        return;
-    }
-
     try {
         showLoading();
         addMessage(message, 'user');
@@ -180,24 +189,21 @@ async function sendMessage(message) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                sessionId,
-                message
-            })
+            body: JSON.stringify({ message })
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-            if (response.status === 403 && data.error.includes('expired')) {
-                clearSession();
-                showError('Session expired. Please verify again.');
-                showVerificationScreen();
-                return;
-            }
             throw new Error(data.error || 'Failed to send message');
         }
 
+        // Hide typing indicator before adding response
+        hideTypingIndicator();
+        
+        // Small delay for smooth transition
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
         addMessage(data.response, 'assistant');
 
         if (data.conversationId) {
@@ -214,6 +220,7 @@ async function sendMessage(message) {
         }
     } catch (error) {
         console.error('Message error:', error);
+        hideTypingIndicator();
         addMessage('Sorry, I encountered an error. Please try again.', 'assistant');
     } finally {
         hideLoading();
@@ -221,37 +228,9 @@ async function sendMessage(message) {
     }
 }
 
-// Event listeners
-verificationForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = emailInput.value.trim();
-    if (email) {
-        await verifyEmail(email);
-    }
-});
-
-messageForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const message = messageInput.value.trim();
-    if (message && sessionId) {
-        messageInput.value = '';
-        await sendMessage(message);
-    }
-});
-
-closeButton.addEventListener('click', () => {
-    clearSession();
-    showVerificationScreen();
-});
-
-// Initialize
-if (!loadSession()) {
-    showVerificationScreen();
+// Initialize on page load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
 } else {
-    showChatScreen();
+    init();
 }
-
-// Auto-focus email input when verification screen is shown
-emailInput.addEventListener('focus', () => {
-    emailInput.select();
-});

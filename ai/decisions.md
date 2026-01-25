@@ -20,9 +20,9 @@
 - Chose: Verify email against ChurnZero primary contact
 - Why: Simple, no extra steps for client if email matches. Can add code verification later if needed.
 
-**Escalation via email to Kayla (not Slack)**
-- Chose: Email
-- Why: More detail can be included, Kayla can handle async. Slack would be faster but less context.
+**Trello support board vs email escalation**
+- Chose: Trello cards
+- Why: Visual tracking, no emails getting lost, team already uses Trello, can see patterns in support requests, cards have full context attached
 
 ## Bot Behavior
 

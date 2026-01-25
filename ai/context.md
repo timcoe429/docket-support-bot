@@ -7,14 +7,14 @@ Docket Support Bot - A client support chatbot for Docket, a SaaS company serving
 - Hosting: Vercel (serverless functions + static hosting)
 - Database: Neon (serverless Postgres)
 - AI: Claude API (Anthropic)
-- Integrations: ChurnZero, Trello, SendGrid
+- Integrations: ChurnZero, Trello (support board for escalation)
 - Frontend: Vanilla HTML/CSS/JS (no React)
 
 ## Non-Negotiables
 - Bot never says "As an AI" or acknowledges being a bot
 - Tone is friendly but firm, not overly apologetic
 - When client complains about delays, bot uses "receipts" — references actual emails sent and dates
-- Escalation goes to Kayla via email with full context
+- Escalation creates Trello card on support board with full context
 - Simple and maintainable — this serves 50-80 users/month, don't over-engineer
 
 ## What We Don't Want
@@ -29,4 +29,4 @@ Website clients (roll-off dumpster businesses) who ask repetitive questions, oft
 
 ## Key URLs
 - Chat will live at: support.yourdocketonline.com
-- Escalation emails go to: kayla@yourdocket.com
+- Escalation creates cards on Trello support board

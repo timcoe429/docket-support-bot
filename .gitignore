@@ -5,3 +5,4 @@ node_modules/
 .env
 .env.local
 # Do NOT ignore /ai folder - we want this in version control
+.vercel

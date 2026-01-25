@@ -3,74 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Docket Support</title>
+    <title>Docket Support Center</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <div class="chat-container" id="chatContainer">
-        <!-- Email Verification Screen -->
-        <div class="verification-screen" id="verificationScreen">
-            <div class="verification-content">
-                <h1>Docket Support</h1>
-                <p>Please enter your email address to get started</p>
-                <form id="verificationForm">
-                    <input 
-                        type="email" 
-                        id="emailInput" 
-                        placeholder="your@email.com" 
-                        required
-                        autocomplete="email"
-                    >
-                    <button type="submit" id="verifyButton">Continue</button>
-                </form>
-                <div class="error-message" id="verificationError"></div>
-            </div>
-        </div>
+    <div class="support-container">
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+            <i data-lucide="menu"></i>
+        </button>
 
-        <!-- Chat Screen -->
-        <div class="chat-screen" id="chatScreen" style="display: none;">
-            <div class="chat-header">
-                <h2>Docket Support</h2>
-                <button class="close-button" id="closeButton" aria-label="Close chat">×</button>
-            </div>
-            
-            <div class="messages-container" id="messagesContainer">
-                <div class="message bot-message">
-                    <div class="message-content">
-                        Hi! I'm here to help. What can I assist you with today?
-                    </div>
-                    <div class="message-time"></div>
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-content">
+                <!-- Logo -->
+                <div class="sidebar-logo">
+                    <svg width="120" height="32" viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <text x="0" y="24" font-family="system-ui, -apple-system" font-size="24" font-weight="600" fill="#009ce6">Docket</text>
+                    </svg>
+                </div>
+
+                <!-- Title -->
+                <h1 class="sidebar-title">Support Center</h1>
+
+                <!-- Quick Help Section -->
+                <div class="quick-help-section">
+                    <h2 class="section-heading">Quick Help</h2>
+                    <nav class="quick-help-links">
+                        <a href="#" class="quick-help-link" data-question="How do I update my business hours?">
+                            <i data-lucide="clock" class="link-icon"></i>
+                            <span>How do I update my business hours?</span>
+                        </a>
+                        <a href="#" class="quick-help-link" data-question="How do I add photos to my website?">
+                            <i data-lucide="image" class="link-icon"></i>
+                            <span>How do I add photos to my website?</span>
+                        </a>
+                        <a href="#" class="quick-help-link" data-question="How do I view my invoices?">
+                            <i data-lucide="file-text" class="link-icon"></i>
+                            <span>How do I view my invoices?</span>
+                        </a>
+                        <a href="#" class="quick-help-link" data-question="How do I reset my password?">
+                            <i data-lucide="key" class="link-icon"></i>
+                            <span>How do I reset my password?</span>
+                        </a>
+                        <a href="#" class="quick-help-link" data-question="How do I request a website change?">
+                            <i data-lucide="edit" class="link-icon"></i>
+                            <span>How do I request a website change?</span>
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Contact Section -->
+                <div class="contact-section">
+                    <h2 class="section-heading">Need to talk to someone?</h2>
+                    <p class="contact-text">Our team typically responds within a few hours</p>
+                </div>
+
+                <!-- Branding -->
+                <div class="sidebar-branding">
+                    <p class="branding-text">Powered by Docket</p>
                 </div>
             </div>
+        </aside>
 
-            <div class="input-container">
-                <form id="messageForm">
-                    <input 
-                        type="text" 
-                        id="messageInput" 
-                        placeholder="Type your message..." 
-                        autocomplete="off"
-                        required
-                    >
-                    <button type="submit" id="sendButton">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="22" y1="2" x2="11" y2="13"></line>
-                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                        </svg>
-                    </button>
-                </form>
+        <!-- Backdrop for mobile -->
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <!-- Main Chat Area -->
+        <main class="chat-area">
+            <!-- Chat Header -->
+            <header class="chat-header">
+                <div class="chat-header-content">
+                    <h2 class="chat-title">Chat with Docket Support</h2>
+                </div>
+            </header>
+
+            <!-- Messages Container -->
+            <div class="messages-container" id="messagesContainer">
+                <!-- Bot greeting will be added here by JavaScript -->
             </div>
 
-            <div class="loading-indicator" id="loadingIndicator" style="display: none;">
+            <!-- Typing Indicator -->
+            <div class="typing-indicator" id="typingIndicator" style="display: none;">
                 <div class="typing-dots">
                     <span></span>
                     <span></span>
                     <span></span>
                 </div>
             </div>
-        </div>
+
+            <!-- Input Container -->
+            <div class="input-container">
+                <form id="messageForm" class="message-form">
+                    <input 
+                        type="text" 
+                        id="messageInput" 
+                        class="message-input"
+                        placeholder="Type your message..." 
+                        autocomplete="off"
+                        required
+                        aria-label="Message input"
+                    >
+                    <button type="submit" id="sendButton" class="send-button" aria-label="Send message">
+                        <i data-lucide="send"></i>
+                    </button>
+                </form>
+            </div>
+        </main>
     </div>
 
     <script src="chat.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
 </body>
 </html>
