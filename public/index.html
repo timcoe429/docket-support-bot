@@ -2,68 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Docket Support Center</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="https://yourdocketonline.com/wp-content/uploads/2025/04/cropped-Blue-Favicon-32x32.png" type="image/png">
 </head>
 <body>
-    <!-- Unified Header -->
-    <header class="unified-header">
-        <div class="header-content">
+    <div class="app">
+        <!-- Main Header -->
+        <header class="main-header">
             <div class="header-logo">
-                <img src="https://www.yourdocket.com/wp-content/uploads/2024/11/highres-blue-docket-dumpster-software.png" alt="Docket Logo" id="headerLogo">
+                <img src="https://yourdocketonline.com/wp-content/uploads/2025/04/highres-blue-docket-dumpster-software-e1746022365938-300x261.png" alt="Docket" height="40">
             </div>
-            <h1 class="header-title">Docket Support Center</h1>
+            <div class="header-title">Docket Support Center</div>
             <div class="header-status">
-                <span class="online-dot"></span>
-                <span class="status-text">Online</span>
+                <span class="status-dot"></span>
+                <span>Online</span>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <div class="support-container">
-        <!-- FAQ Panel -->
-        <aside class="faq-panel" id="faqPanel">
-            <div class="panel-toggle-overlay">Browse FAQ →</div>
-            <div class="faq-panel-content">
-                <!-- FAQ Header -->
-                <header class="faq-header">
-                    <div class="faq-search-container">
-                        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.35-4.35"></path>
-                        </svg>
-                        <input 
-                            type="text" 
-                            id="faqSearch" 
-                            class="faq-search-input"
-                            placeholder="Search for help..."
-                            aria-label="Search FAQ"
-                        >
-                    </div>
-                </header>
-
-                <!-- FAQ Categories -->
-                <div class="faq-categories" id="faqCategories">
-                    <!-- Categories will be dynamically loaded here -->
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- FAQ Panel -->
+            <aside class="faq-panel">
+                <div class="faq-search">
+                    <input type="text" id="faqSearch" placeholder="Search for help...">
                 </div>
 
-                <!-- FAQ Footer -->
-                <footer class="faq-footer">
-                    <p class="faq-footer-text">
-                        Can't find what you're looking for? 
-                        <a href="#" id="faq-chat-link" class="faq-footer-link">Chat with our team →</a>
-                    </p>
-                </footer>
-            </div>
-        </aside>
+                <div class="faq-categories" id="faqCategories">
+                    <!-- Categories loaded dynamically -->
+                </div>
 
-        <!-- Chat Panel -->
-        <main class="chat-panel" id="chatPanel">
-            <div class="panel-toggle-overlay">Chat with Support →</div>
-            <!-- Chat Header -->
-            <header class="chat-header">
-                <div class="chat-header-content">
+                <div class="faq-footer">
+                    <a href="#" class="faq-footer-link" id="startChatLink">Can't find what you're looking for? Chat with us →</a>
+                </div>
+            </aside>
+
+            <!-- Chat Panel -->
+            <main class="chat-panel">
+                <div class="chat-header">
                     <div class="chat-header-info">
                         <div class="chat-header-title">Docket Website Support Team</div>
                         <div class="chat-header-subtitle">We typically reply within a few minutes</div>
@@ -73,73 +50,21 @@
                         <span>Online</span>
                     </div>
                 </div>
-            </header>
 
-            <!-- Messages Container -->
-            <div class="messages-container" id="messagesContainer">
-                <!-- Initial state: Empty with prompt -->
-                <div class="chat-empty-state" id="chatEmptyState">
-                    <p class="welcome-subtitle">Our support team is here to help.</p>
-                    <div class="welcome-stats">
-                        <div class="welcome-stat">
-                            <span class="welcome-stat-dot"></span>
-                            <span>4 agents online</span>
-                        </div>
-                        <div class="welcome-stat">
-                            <span class="welcome-stat-dot empty"></span>
-                            <span>Currently helping 12 customers</span>
-                        </div>
-                        <div class="welcome-stat">
-                            <span class="welcome-stat-dot empty"></span>
-                            <span>Avg response time: under 2 min</span>
-                        </div>
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages added dynamically -->
+                </div>
+
+                <div class="chat-input-container">
+                    <div class="chat-input-wrapper">
+                        <textarea class="chat-input" id="messageInput" placeholder="Type your message..." rows="1"></textarea>
+                        <button class="send-button" id="sendButton">
+                            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                        </button>
                     </div>
-                    <button class="start-chat-button" id="startChatButton">Start a Conversation</button>
                 </div>
-            </div>
-
-            <!-- Typing Indicator -->
-            <div class="typing-indicator" id="typingIndicator" style="display: none;">
-                <div class="agent-avatar">DS</div>
-                <div class="typing-dots">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-
-            <!-- Input Container -->
-            <div class="input-container" id="inputContainer" style="display: none;">
-                <form id="messageForm" class="message-form">
-                    <input 
-                        type="text" 
-                        id="messageInput" 
-                        class="message-input"
-                        placeholder="Type your message..." 
-                        autocomplete="off"
-                        required
-                        aria-label="Message input"
-                        disabled
-                    >
-                    <button type="submit" id="sendButton" class="send-button" aria-label="Send message" disabled>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="22" y1="2" x2="11" y2="13"></line>
-                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                        </svg>
-                    </button>
-                </form>
-            </div>
-        </main>
-
-        <!-- Mobile Tab Navigation -->
-        <nav class="mobile-tabs" id="mobileTabs">
-            <button class="mobile-tab active" data-tab="faq" id="mobileTabFaq">
-                <span>FAQ</span>
-            </button>
-            <button class="mobile-tab" data-tab="chat" id="mobileTabChat">
-                <span>Chat</span>
-            </button>
-        </nav>
+            </main>
+        </div>
     </div>
 
     <script src="chat.js"></script>

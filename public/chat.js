@@ -1,508 +1,326 @@
-// Application state
-let faqData = null;
+// State
 let conversationId = null;
-let chatConnected = false;
-let currentSearchTerm = '';
+let faqData = { categories: [] };
 
-// Category icon mapping - removed emojis for professional look
-const categoryIcons = {
-    'helpful-resources': '',
-    'basics': '',
-    'faqs': '',
-    'changing-content': '',
-    'adding-content': '',
-    'plugins-seo': '',
-    'docketshop': ''
-};
-
-// DOM elements
-const faqPanel = document.getElementById('faqPanel');
-const chatPanel = document.getElementById('chatPanel');
-const faqCategories = document.getElementById('faqCategories');
-const faqSearch = document.getElementById('faqSearch');
-const messagesContainer = document.getElementById('messagesContainer');
-const chatEmptyState = document.getElementById('chatEmptyState');
-const startChatButton = document.getElementById('startChatButton');
-const messageForm = document.getElementById('messageForm');
+// DOM Elements
+const chatMessages = document.getElementById('chatMessages');
 const messageInput = document.getElementById('messageInput');
 const sendButton = document.getElementById('sendButton');
-const inputContainer = document.getElementById('inputContainer');
-const typingIndicator = document.getElementById('typingIndicator');
-const faqChatLink = document.getElementById('faq-chat-link');
-const mobileTabFaq = document.getElementById('mobileTabFaq');
-const mobileTabChat = document.getElementById('mobileTabChat');
+const faqCategories = document.getElementById('faqCategories');
+const faqSearch = document.getElementById('faqSearch');
+const startChatLink = document.getElementById('startChatLink');
 
 // Initialize
+document.addEventListener('DOMContentLoaded', init);
+
 async function init() {
-    await loadFAQData();
+    // Load FAQ data
+    await loadFAQ();
+    
+    // Render FAQ categories
     renderFAQCategories();
+    
+    // Set up event listeners
     setupEventListeners();
     
-    // Handle logo loading errors
-    const logos = document.querySelectorAll('img[src*="docket"], img[id*="Logo"], img[id*="logo"]');
-    logos.forEach(img => {
-        img.addEventListener('error', function() {
-            this.style.display = 'none';
-        });
-    });
+    // Start chat immediately
+    startChat();
 }
 
 // Load FAQ data
-async function loadFAQData() {
+async function loadFAQ() {
     try {
         const response = await fetch('/faq.json');
-        if (!response.ok) throw new Error('Failed to load FAQ data');
         faqData = await response.json();
     } catch (error) {
-        console.error('Error loading FAQ data:', error);
-        faqData = { categories: [] };
+        console.error('Error loading FAQ:', error);
     }
 }
 
 // Render FAQ categories
-function renderFAQCategories(searchTerm = '') {
-    if (!faqData || !faqData.categories) return;
-    
-    faqCategories.innerHTML = '';
-    currentSearchTerm = searchTerm.toLowerCase();
-    
-    // Map category IDs to resource IDs for highlighting
-    const resourceIdMap = {
-        'helpful-resources': 'helpful-resources',
-        'basics': 'basics-logging-in',
-        'faqs': 'faqs',
-        'changing-content': 'changing-content',
-        'adding-content': 'adding-content',
-        'plugins-seo': 'plugins-seo',
-        'docketshop': 'docketshop'
-    };
-    
-    faqData.categories.forEach(category => {
-        const categoryDiv = document.createElement('div');
-        categoryDiv.className = 'faq-category resource-category';
-        categoryDiv.dataset.categoryId = category.id;
-        
-        // Add resource ID for highlighting
-        const resourceId = resourceIdMap[category.id] || category.id;
-        categoryDiv.dataset.resourceId = resourceId;
-        
-        // Filter items based on search
-        let visibleItems = category.items;
-        if (currentSearchTerm) {
-            visibleItems = category.items.filter(item => {
-                const questionMatch = item.question.toLowerCase().includes(currentSearchTerm);
-                const keywordMatch = item.keywords?.some(kw => 
-                    kw.toLowerCase().includes(currentSearchTerm)
-                );
-                return questionMatch || keywordMatch;
-            });
-        }
-        
-        // Only show category if it has visible items
-        if (visibleItems.length === 0 && currentSearchTerm) {
-            return;
-        }
-        
-        // Auto-expand if searching
-        if (currentSearchTerm && visibleItems.length > 0) {
-            categoryDiv.classList.add('expanded');
-        }
-        
-        const itemCount = visibleItems.length;
-        
-        const header = document.createElement('div');
-        header.className = 'faq-category-header';
-        header.innerHTML = `
-            <div class="faq-category-header-left">
+function renderFAQCategories() {
+    faqCategories.innerHTML = faqData.categories.map(category => `
+        <div class="faq-category" data-category-id="${category.id}">
+            <div class="faq-category-header">
                 <div class="faq-category-info">
                     <div class="faq-category-title">${category.name}</div>
-                    ${category.description ? `<div class="faq-category-description">${category.description}</div>` : ''}
-                    <span class="faq-category-badge">${itemCount} ${itemCount === 1 ? 'article' : 'articles'}</span>
+                    <div class="faq-category-description">${category.description || ''}</div>
+                    <div class="faq-category-meta">${category.items.length} articles</div>
                 </div>
+                <span class="faq-category-arrow">▼</span>
             </div>
-            <div class="faq-category-toggle">▼</div>
-        `;
-        
-        const itemsDiv = document.createElement('div');
-        itemsDiv.className = 'faq-category-items';
-        
-        visibleItems.forEach(item => {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'faq-item';
-            itemDiv.dataset.itemId = item.id;
-            
-            const question = document.createElement('div');
-            question.className = 'faq-question';
-            
-            // Add arrow icon
-            const arrow = document.createElement('span');
-            arrow.className = 'faq-question-arrow';
-            arrow.textContent = '▶';
-            
-            const questionText = document.createElement('span');
-            questionText.textContent = item.question;
-            
-            // Highlight search terms
-            if (currentSearchTerm) {
-                const regex = new RegExp(`(${escapeRegex(currentSearchTerm)})`, 'gi');
-                questionText.innerHTML = item.question.replace(regex, '<span class="highlight">$1</span>');
-            }
-            
-            question.appendChild(arrow);
-            question.appendChild(questionText);
-            
-            const answer = document.createElement('div');
-            answer.className = 'faq-answer';
-            const answerContent = document.createElement('div');
-            answerContent.className = 'faq-answer-content';
-            answerContent.innerHTML = item.answer;
-            answer.appendChild(answerContent);
-            
-            itemDiv.appendChild(question);
-            itemDiv.appendChild(answer);
-            
-            // Expand on click
-            question.addEventListener('click', () => {
-                itemDiv.classList.toggle('expanded');
-            });
-            
-            itemsDiv.appendChild(itemDiv);
-        });
-        
-        categoryDiv.appendChild(header);
-        categoryDiv.appendChild(itemsDiv);
-        
-        // Toggle category on header click
+            <div class="faq-items">
+                ${category.items.map(item => `
+                    <div class="faq-item" data-item-id="${item.id}">
+                        <div class="faq-item-question">${item.question}</div>
+                        <div class="faq-item-answer">${item.answer}</div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
+
+    // Add click handlers for categories
+    document.querySelectorAll('.faq-category-header').forEach(header => {
         header.addEventListener('click', () => {
-            categoryDiv.classList.toggle('expanded');
+            const category = header.closest('.faq-category');
+            category.classList.toggle('expanded');
         });
-        
-        faqCategories.appendChild(categoryDiv);
+    });
+
+    // Add click handlers for FAQ items
+    document.querySelectorAll('.faq-item-question').forEach(question => {
+        question.addEventListener('click', () => {
+            const item = question.closest('.faq-item');
+            item.classList.toggle('expanded');
+        });
     });
 }
 
-// Escape regex special characters
-function escapeRegex(str) {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-// Setup event listeners
+// Set up event listeners
 function setupEventListeners() {
+    // Send button click
+    sendButton.addEventListener('click', handleSend);
+
+    // Enter key to send (Shift+Enter for new line)
+    messageInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSend();
+        }
+    });
+
+    // Auto-resize textarea
+    messageInput.addEventListener('input', () => {
+        messageInput.style.height = 'auto';
+        messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
+    });
+
     // FAQ search
-    faqSearch.addEventListener('input', (e) => {
-        renderFAQCategories(e.target.value);
-    });
-    
-    // Start chat button
-    startChatButton.addEventListener('click', startChat);
-    
-    // FAQ footer link - triggers chat expansion and connection
-    faqChatLink.addEventListener('click', (e) => {
+    faqSearch.addEventListener('input', handleFAQSearch);
+
+    // Start chat link
+    startChatLink.addEventListener('click', (e) => {
         e.preventDefault();
-        if (window.innerWidth < 768) {
-            switchToTab('chat');
-        }
-        startChat();
+        messageInput.focus();
     });
-    
-    // Message form
-    messageForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const message = messageInput.value.trim();
-        if (message && !messageInput.disabled) {
-            messageInput.value = '';
-            await sendMessage(message);
-        }
-    });
-    
-    // Mobile tabs
-    mobileTabFaq.addEventListener('click', () => switchToTab('faq'));
-    mobileTabChat.addEventListener('click', () => switchToTab('chat'));
-    
-    // Panel click handlers for minimized views (desktop)
-    const faqToggleOverlay = faqPanel.querySelector('.panel-toggle-overlay');
-    const chatToggleOverlay = chatPanel.querySelector('.panel-toggle-overlay');
-    
-    // Note: Panel toggle overlays removed - panels now maintain fixed widths
 }
 
-// Switch mobile tab
-function switchToTab(tab) {
-    if (tab === 'faq') {
-        faqPanel.classList.remove('hidden');
-        chatPanel.classList.remove('active');
-        mobileTabFaq.classList.add('active');
-        mobileTabChat.classList.remove('active');
-    } else {
-        faqPanel.classList.add('hidden');
-        chatPanel.classList.add('active');
-        mobileTabChat.classList.add('active');
-        mobileTabFaq.classList.remove('active');
-    }
+// Start chat - show initial messages
+function startChat() {
+    addSystemMessage('Connected to Docket Website Support');
+    addBotMessage('Hi there! 👋 How can I help you with your Docket website today?');
 }
 
-// Start chat connection sequence
-async function startChat() {
-    if (chatConnected) return;
-    
-    // Hide empty state
-    chatEmptyState.style.display = 'none';
-    
-    // Show input container (disabled)
-    inputContainer.style.display = 'block';
-    messageInput.disabled = true;
-    sendButton.disabled = true;
-    
-    // Show connecting message
-    addSystemMessage('Connecting you with a support agent...');
+// Handle send
+async function handleSend() {
+    const message = messageInput.value.trim();
+    if (!message) return;
+
+    // Clear input
+    messageInput.value = '';
+    messageInput.style.height = 'auto';
+
+    // Add user message
+    addUserMessage(message);
+
+    // Show typing indicator
     showTypingIndicator();
-    
-    // Random delay between 5-8 seconds
-    const delay = 5000 + Math.random() * 3000;
-    
-    await new Promise(resolve => setTimeout(resolve, delay));
-    
-    hideTypingIndicator();
-    addSystemMessage('Connected! You\'re now chatting with the Docket Support Team.');
-    
-    // Wait 1 second, then show first bot message
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    addAgentMessage('Hi there! I\'m here to help you with any questions about Docket. What can I assist you with today?', null, true);
-    
-    // Enable input
-    messageInput.disabled = false;
-    sendButton.disabled = false;
-    chatConnected = true;
-    
-    // Focus input
-    messageInput.focus();
-}
 
-// Add system message
-function addSystemMessage(content) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'message system-message';
-    
-    const contentDiv = document.createElement('div');
-    contentDiv.className = 'message-content';
-    contentDiv.textContent = content;
-    
-    messageDiv.appendChild(contentDiv);
-    messagesContainer.appendChild(messageDiv);
-    scrollToBottom();
-}
-
-// Add agent message
-function addAgentMessage(content, timestamp = null, showQuickActions = false) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'message agent-message';
-    
-    // Add avatar
-    const avatarDiv = document.createElement('div');
-    avatarDiv.className = 'agent-avatar';
-    avatarDiv.textContent = 'DS';
-    messageDiv.appendChild(avatarDiv);
-    
-    const contentWrapper = document.createElement('div');
-    contentWrapper.className = 'agent-message-content-wrapper';
-    
-    const contentDiv = document.createElement('div');
-    contentDiv.className = 'message-content';
-    contentDiv.innerHTML = content;
-    
-    const timeDiv = document.createElement('div');
-    timeDiv.className = 'message-time';
-    timeDiv.textContent = timestamp || formatTime(new Date());
-    
-    contentWrapper.appendChild(contentDiv);
-    
-    // Add quick action buttons if requested
-    if (showQuickActions) {
-        const quickActions = getQuickActions();
-        if (quickActions.length > 0) {
-            const quickActionsDiv = document.createElement('div');
-            quickActionsDiv.className = 'quick-actions';
-            
-            quickActions.forEach(action => {
-                const button = document.createElement('button');
-                button.className = 'quick-action-button';
-                button.textContent = action.label;
-                button.type = 'button';
-                button.addEventListener('click', () => sendQuickAction(action.value));
-                quickActionsDiv.appendChild(button);
-            });
-            
-            contentWrapper.appendChild(quickActionsDiv);
-        }
-    }
-    
-    contentWrapper.appendChild(timeDiv);
-    
-    messageDiv.appendChild(contentWrapper);
-    
-    messagesContainer.appendChild(messageDiv);
-    scrollToBottom();
-}
-
-// Add user message
-function addUserMessage(content, timestamp = null) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'message user-message';
-    
-    const contentDiv = document.createElement('div');
-    contentDiv.className = 'message-content';
-    contentDiv.textContent = content;
-    
-    const timeDiv = document.createElement('div');
-    timeDiv.className = 'message-time';
-    timeDiv.textContent = timestamp || formatTime(new Date());
-    
-    messageDiv.appendChild(contentDiv);
-    messageDiv.appendChild(timeDiv);
-    
-    messagesContainer.appendChild(messageDiv);
-    scrollToBottom();
-}
-
-// Format time
-function formatTime(date) {
-    return date.toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit'
-    });
-}
-
-// Show typing indicator
-function showTypingIndicator() {
-    typingIndicator.style.display = 'block';
-    scrollToBottom();
-}
-
-// Hide typing indicator
-function hideTypingIndicator() {
-    typingIndicator.style.display = 'none';
-}
-
-// Scroll to bottom
-function scrollToBottom() {
-    setTimeout(() => {
-        messagesContainer.scrollTo({
-            top: messagesContainer.scrollHeight,
-            behavior: 'smooth'
-        });
-    }, 100);
-}
-
-// Get quick action buttons for initial greeting
-function getQuickActions() {
-    return [
-        { label: 'Account Setup', value: 'account setup' },
-        { label: 'Billing Questions', value: 'billing' },
-        { label: 'Technical Support', value: 'technical support' },
-        { label: 'Feature Request', value: 'feature request' }
-    ];
-}
-
-// Send quick action message
-function sendQuickAction(actionValue) {
-    sendMessage(actionValue);
-}
-
-// Send message
-async function sendMessage(message) {
     try {
-        // Disable input
-        messageInput.disabled = true;
-        sendButton.disabled = true;
-        
-        // Add user message
-        addUserMessage(message);
-        
-        // Show typing indicator
-        showTypingIndicator();
-        
-        // Random delay 1-3 seconds before sending
-        const delay = 1000 + Math.random() * 2000;
-        await new Promise(resolve => setTimeout(resolve, delay));
-        
         // Send to API
         const response = await fetch('/api/message', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ message })
+            body: JSON.stringify({
+                message,
+                conversationId
+            })
         });
-        
+
         const data = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(data.error || 'Failed to send message');
-        }
-        
+
         // Hide typing indicator
         hideTypingIndicator();
-        
-        // Small delay for smooth transition
-        await new Promise(resolve => setTimeout(resolve, 200));
-        
-        // Add agent response
-        addAgentMessage(data.response);
-        
+
+        if (data.error) {
+            addBotMessage('Sorry, I encountered an error. Please try again.');
+            return;
+        }
+
+        // Save conversation ID
         if (data.conversationId) {
             conversationId = data.conversationId;
         }
-        
-        if (data.escalated) {
-            // Show escalation message if not already in response
-            if (!data.response.includes('Kayla') && !data.response.includes('escalated')) {
-                setTimeout(() => {
-                    addAgentMessage('I\'ve escalated this to our support team. They\'ll follow up with you shortly.');
-                }, 1000);
-            }
-        }
+
+        // Add bot response
+        addBotMessage(data.response);
+
     } catch (error) {
-        console.error('Message error:', error);
+        console.error('Error sending message:', error);
         hideTypingIndicator();
-        addAgentMessage('Sorry, I encountered an error. Please try again.');
-    } finally {
-        // Re-enable input
-        messageInput.disabled = false;
-        sendButton.disabled = false;
-        messageInput.focus();
+        addBotMessage('Sorry, I encountered an error. Please try again.');
     }
 }
 
-// Resource highlighting function - available globally for API use
-function highlightResource(resourceId) {
-    // Remove any existing highlights
-    document.querySelectorAll('.resource-category').forEach(el => {
-        el.classList.remove('ai-highlighted');
+// Add system message
+function addSystemMessage(text) {
+    const div = document.createElement('div');
+    div.className = 'system-message';
+    div.innerHTML = `<span class="system-message-text">${text}</span>`;
+    chatMessages.appendChild(div);
+    scrollToBottom();
+}
+
+// Add bot message
+function addBotMessage(content) {
+    const quickActions = getQuickActions(content);
+    const quickActionsHtml = quickActions.length > 0
+        ? `<div class="message-actions">${quickActions.map(action =>
+            `<button class="message-action-btn" onclick="sendQuickAction('${action.replace(/'/g, "\\'")}')">${action}</button>`
+          ).join('')}</div>`
+        : '';
+
+    const div = document.createElement('div');
+    div.className = 'message bot';
+    div.innerHTML = `
+        <div class="message-avatar">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+        </div>
+        <div class="message-wrapper">
+            <div class="message-content">
+                <div class="message-text">${content}</div>
+                ${quickActionsHtml}
+            </div>
+            <div class="message-time">${formatTime()}</div>
+        </div>
+    `;
+    chatMessages.appendChild(div);
+    scrollToBottom();
+}
+
+// Add user message
+function addUserMessage(text) {
+    const div = document.createElement('div');
+    div.className = 'message user';
+    div.innerHTML = `
+        <div class="message-avatar">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </div>
+        <div class="message-wrapper">
+            <div class="message-content">
+                <div class="message-text">${escapeHtml(text)}</div>
+            </div>
+            <div class="message-time">${formatTime()}</div>
+        </div>
+    `;
+    chatMessages.appendChild(div);
+    scrollToBottom();
+}
+
+// Get contextual quick actions based on response content
+function getQuickActions(content) {
+    const lowerContent = content.toLowerCase();
+
+    if (lowerContent.includes('login') || lowerContent.includes('wp-admin') || lowerContent.includes('password')) {
+        return ["I can't find the email", "Password doesn't work"];
+    }
+    if (lowerContent.includes('elementor') || lowerContent.includes('edit') && lowerContent.includes('page')) {
+        return ['Show me how', 'I need more help'];
+    }
+    if (lowerContent.includes('domain') || lowerContent.includes('dns')) {
+        return ["I don't understand", 'Can someone help me?'];
+    }
+
+    return [];
+}
+
+// Send quick action as message
+function sendQuickAction(action) {
+    // Remove quick actions from last message
+    const lastActions = chatMessages.querySelector('.message:last-child .message-actions');
+    if (lastActions) {
+        lastActions.remove();
+    }
+
+    // Set input and send
+    messageInput.value = action;
+    handleSend();
+}
+
+// Make sendQuickAction available globally for onclick handlers
+window.sendQuickAction = sendQuickAction;
+
+// Show typing indicator
+function showTypingIndicator() {
+    const div = document.createElement('div');
+    div.className = 'message bot';
+    div.id = 'typingIndicator';
+    div.innerHTML = `
+        <div class="message-avatar">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+        </div>
+        <div class="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        </div>
+    `;
+    chatMessages.appendChild(div);
+    scrollToBottom();
+}
+
+// Hide typing indicator
+function hideTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) {
+        indicator.remove();
+    }
+}
+
+// FAQ search handler
+function handleFAQSearch(e) {
+    const query = e.target.value.toLowerCase().trim();
+
+    document.querySelectorAll('.faq-category').forEach(category => {
+        let categoryHasMatch = false;
+
+        category.querySelectorAll('.faq-item').forEach(item => {
+            const question = item.querySelector('.faq-item-question').textContent.toLowerCase();
+            const answer = item.querySelector('.faq-item-answer').textContent.toLowerCase();
+            const matches = question.includes(query) || answer.includes(query);
+
+            item.style.display = matches || !query ? '' : 'none';
+            if (matches) categoryHasMatch = true;
+        });
+
+        // Show category if it has matching items
+        category.style.display = categoryHasMatch || !query ? '' : 'none';
+
+        // Auto-expand categories with matches
+        if (query && categoryHasMatch) {
+            category.classList.add('expanded');
+        } else if (!query) {
+            category.classList.remove('expanded');
+        }
     });
-    
-    // Find and highlight the target
-    const target = document.querySelector(`[data-resource-id="${resourceId}"]`);
-    if (target) {
-        // Expand if collapsed
-        target.classList.add('expanded');
-        // Add highlight
-        target.classList.add('ai-highlighted');
-        // Scroll into view smoothly
-        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        // Remove highlight after 5 seconds
-        setTimeout(() => {
-            target.classList.remove('ai-highlighted');
-        }, 5000);
-    }
 }
 
-// Make highlightResource available globally
-window.highlightResource = highlightResource;
+// Utility: Scroll to bottom
+function scrollToBottom() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
 
-// Initialize on page load
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-} else {
-    init();
+// Utility: Format time
+function formatTime() {
+    return new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+}
+
+// Utility: Escape HTML for user input
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
