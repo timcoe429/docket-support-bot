@@ -38,11 +38,11 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 15px;
     background: var(--bg-page);
     color: var(--text-primary);
-    line-height: 1.5;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow: hidden;
@@ -428,28 +428,42 @@ body {
 .chat-header {
     background: var(--bg-panel);
     border-bottom: 1px solid var(--border);
-    padding: 16px 24px;
+    padding: 20px 24px;
     z-index: 10;
 }
 
 .chat-header-content {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
+    gap: 16px;
 }
 
-.chat-header-left {
-    display: none;
+.chat-header-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
-.chat-title {
-    display: none;
+.chat-header-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.chat-header-subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 400;
 }
 
 .chat-status {
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-shrink: 0;
 }
 
 .status-dot {
@@ -457,6 +471,7 @@ body {
     height: 8px;
     border-radius: 50%;
     background: var(--online-green);
+    flex-shrink: 0;
 }
 
 .status-text {
@@ -625,6 +640,39 @@ body {
     color: var(--text-primary);
     border: none;
     border-bottom-left-radius: 4px;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.agent-message .message-content p {
+    margin: 0 0 8px 0;
+}
+
+.agent-message .message-content p:last-child {
+    margin-bottom: 0;
+}
+
+.agent-message .message-content ul,
+.agent-message .message-content ol {
+    margin: 8px 0;
+    padding-left: 24px;
+}
+
+.agent-message .message-content li {
+    margin-bottom: 4px;
+}
+
+.agent-message .message-content code {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Monaco', 'Courier New', monospace;
+}
+
+.agent-message .message-content strong {
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
 .message-time {
@@ -644,13 +692,25 @@ body {
 
 /* Agent Avatar */
 .agent-avatar {
-    display: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+    text-transform: uppercase;
 }
 
 .agent-message-content-wrapper {
     flex: 1;
     display: flex;
     flex-direction: column;
+    gap: 8px;
 }
 
 /* System Messages */
@@ -671,18 +731,35 @@ body {
 /* Typing Indicator */
 .typing-indicator {
     padding: 0 24px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.typing-indicator .agent-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+    text-transform: uppercase;
 }
 
 .typing-dots {
     display: flex;
     gap: 4px;
     padding: 12px 16px;
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    border-radius: 20px;
+    background: #F1F5F9;
+    border: none;
+    border-radius: 16px;
     border-bottom-left-radius: 4px;
     max-width: 60px;
-    box-shadow: var(--shadow-sm);
 }
 
 .typing-dots span {
@@ -787,6 +864,39 @@ body {
 .send-button svg {
     width: 20px;
     height: 20px;
+}
+
+/* Quick Action Buttons */
+.quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.quick-action-button {
+    background: var(--bg-white);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.quick-action-button:hover {
+    background: var(--bg-hover);
+    border-color: var(--primary-blue);
+    color: var(--primary-blue);
+}
+
+.quick-action-button:active {
+    background: var(--bg-hover);
+    transform: scale(0.98);
 }
 
 /* Mobile Tab Navigation */

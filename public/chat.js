@@ -268,7 +268,7 @@ async function startChat() {
     // Wait 1 second, then show first bot message
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    addAgentMessage('Hi there! How can I help you today?');
+    addAgentMessage('Hi there! I\'m here to help you with any questions about Docket. What can I assist you with today?', null, true);
     
     // Enable input
     messageInput.disabled = false;
@@ -294,9 +294,15 @@ function addSystemMessage(content) {
 }
 
 // Add agent message
-function addAgentMessage(content, timestamp = null) {
+function addAgentMessage(content, timestamp = null, showQuickActions = false) {
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message agent-message';
+    
+    // Add avatar
+    const avatarDiv = document.createElement('div');
+    avatarDiv.className = 'agent-avatar';
+    avatarDiv.textContent = 'DS';
+    messageDiv.appendChild(avatarDiv);
     
     const contentWrapper = document.createElement('div');
     contentWrapper.className = 'agent-message-content-wrapper';
@@ -310,6 +316,27 @@ function addAgentMessage(content, timestamp = null) {
     timeDiv.textContent = timestamp || formatTime(new Date());
     
     contentWrapper.appendChild(contentDiv);
+    
+    // Add quick action buttons if requested
+    if (showQuickActions) {
+        const quickActions = getQuickActions();
+        if (quickActions.length > 0) {
+            const quickActionsDiv = document.createElement('div');
+            quickActionsDiv.className = 'quick-actions';
+            
+            quickActions.forEach(action => {
+                const button = document.createElement('button');
+                button.className = 'quick-action-button';
+                button.textContent = action.label;
+                button.type = 'button';
+                button.addEventListener('click', () => sendQuickAction(action.value));
+                quickActionsDiv.appendChild(button);
+            });
+            
+            contentWrapper.appendChild(quickActionsDiv);
+        }
+    }
+    
     contentWrapper.appendChild(timeDiv);
     
     messageDiv.appendChild(contentWrapper);
@@ -365,6 +392,21 @@ function scrollToBottom() {
             behavior: 'smooth'
         });
     }, 100);
+}
+
+// Get quick action buttons for initial greeting
+function getQuickActions() {
+    return [
+        { label: 'Account Setup', value: 'account setup' },
+        { label: 'Billing Questions', value: 'billing' },
+        { label: 'Technical Support', value: 'technical support' },
+        { label: 'Feature Request', value: 'feature request' }
+    ];
+}
+
+// Send quick action message
+function sendQuickAction(actionValue) {
+    sendMessage(actionValue);
 }
 
 // Send message
