@@ -371,26 +371,34 @@ body {
 }
 
 /* List styling in messages */
-.message-text ol,
+.message-text ol {
+    counter-reset: list-item;
+    list-style: none;
+    padding-left: 0;
+    margin: 12px 0;
+}
+
 .message-text ul {
     margin: 12px 0;
     padding-left: 0;
     list-style: none;
 }
 
-.message-text li {
+.message-text ol > li {
+    position: relative;
+    padding-left: 28px;
+    margin-bottom: 10px;
+    counter-increment: list-item;
+}
+
+.message-text ul > li {
     position: relative;
     padding-left: 28px;
     margin-bottom: 10px;
 }
 
-.message-text ol {
-    counter-reset: list-item;
-}
-
-.message-text ol li::before {
+.message-text ol > li::before {
     content: counter(list-item);
-    counter-increment: list-item;
     position: absolute;
     left: 0;
     width: 20px;
@@ -406,7 +414,7 @@ body {
     top: 1px;
 }
 
-.message-text ul li::before {
+.message-text ul > li::before {
     content: "";
     position: absolute;
     left: 6px;
@@ -415,6 +423,20 @@ body {
     height: 6px;
     background: #009ce6;
     border-radius: 50%;
+}
+
+/* Nested lists (ul inside ol) should use bullets, not numbers */
+.message-text ol ul {
+    counter-reset: none;
+    margin: 8px 0;
+}
+
+.message-text ol ul li::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: #009ce6;
+    counter-increment: none;
 }
 
 .message-text code {

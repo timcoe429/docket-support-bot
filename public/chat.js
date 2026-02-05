@@ -145,6 +145,10 @@ async function handleSend() {
         // Hide typing indicator
         hideTypingIndicator();
 
+        // Add realistic delay (1000-2000ms randomly)
+        const delay = 1000 + Math.random() * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+
         if (data.error) {
             addBotMessage('Sorry, I encountered an error. Please try again.');
             return;
