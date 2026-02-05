@@ -630,20 +630,21 @@ body {
 
 .welcome-content {
     text-align: center;
-    max-width: 420px;
+    max-width: 500px;
+    width: 100%;
 }
 
 .welcome-title {
-    font-size: 20px;
+    font-size: 26px;
     font-weight: 600;
     color: #1e293b;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .welcome-text {
-    font-size: 14px;
+    font-size: 16px;
     color: #64748b;
-    margin-bottom: 28px;
+    margin-bottom: 32px;
 }
 
 /* Category Buttons */
@@ -657,11 +658,11 @@ body {
 .category-btn {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 12px 16px;
+    gap: 16px;
+    padding: 16px 20px;
     background: #ffffff;
     border: 1px solid #e8ecf1;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.2s;
     text-align: left;
@@ -675,10 +676,10 @@ body {
 }
 
 .category-icon {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     background: #f0f9ff;
-    border-radius: 8px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -687,8 +688,8 @@ body {
 }
 
 .category-icon svg {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
     fill: #009ce6;
     transition: fill 0.2s;
 }
@@ -706,15 +707,15 @@ body {
 }
 
 .category-title {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     color: #1e293b;
 }
 
 .category-desc {
-    font-size: 12px;
+    font-size: 14px;
     color: #64748b;
-    margin-top: 1px;
+    margin-top: 2px;
 }
 
 .category-arrow {
@@ -737,14 +738,14 @@ body {
 .welcome-stat {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 12px;
+    gap: 8px;
+    font-size: 14px;
     color: #64748b;
 }
 
 .stat-dot {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
     background: #22c55e;
     border-radius: 50%;
 }
