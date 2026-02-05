@@ -205,33 +205,25 @@ export default async function handler(req, res) {
 
     // Generate response
     let botResponse = '';
-    let faqMatch = null;
 
     if (escalationTriggered) {
       // If escalation triggered, respond with escalation message
       botResponse = "Let me get Kayla to help with this - she'll follow up with you shortly.";
     } else {
-      // Check FAQ first
-      faqMatch = findMatchingFAQ(message);
-      
-      if (faqMatch) {
-        botResponse = faqMatch.answer;
-      } else {
-        // Call Claude to generate AI response
-        try {
-          const claudeResponse = await generateResponse(
-            message, // current user message
-            conversationHistory, // previous messages
-            context // ChurnZero, Trello, KB context
-          );
-          botResponse = claudeResponse.response; // Note: Claude returns {response, usage, stopReason}
-        } catch (error) {
-          console.error('Claude API error:', error);
-          // Fallback: friendly message and trigger escalation
-          botResponse = "I'm having trouble connecting right now. Let me create a support ticket so our team can help you directly.";
-          escalationTriggered = true;
-          escalationReason = 'Claude API error: ' + error.message;
-        }
+      // Always call Claude to generate AI response
+      try {
+        const claudeResponse = await generateResponse(
+          message, // current user message
+          conversationHistory, // previous messages
+          context // ChurnZero, Trello, KB context
+        );
+        botResponse = claudeResponse.response; // Note: Claude returns {response, usage, stopReason}
+      } catch (error) {
+        console.error('Claude API error:', error);
+        // Fallback: friendly message and trigger escalation
+        botResponse = "I'm having trouble connecting right now. Let me create a support ticket so our team can help you directly.";
+        escalationTriggered = true;
+        escalationReason = 'Claude API error: ' + error.message;
       }
     }
 
@@ -243,9 +235,7 @@ export default async function handler(req, res) {
       {
         churnZero: churnZeroContext ? { account: churnZeroContext.account } : null,
         trello: trelloContext ? { activeProjects: trelloContext.activeProjects?.length || 0 } : null,
-        knowledgeBase: knowledgeBaseResults.length,
-        faqMatched: faqMatch ? faqMatch.question : null,
-        faqCategory: faqMatch ? faqMatch.category : null
+        knowledgeBase: knowledgeBaseResults.length
       }
     );
 

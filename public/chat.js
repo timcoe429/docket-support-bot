@@ -9,6 +9,9 @@ const sendButton = document.getElementById('sendButton');
 const faqCategories = document.getElementById('faqCategories');
 const faqSearch = document.getElementById('faqSearch');
 const startChatLink = document.getElementById('startChatLink');
+const chatWelcome = document.getElementById('chatWelcome');
+const chatInterface = document.getElementById('chatInterface');
+const startChatBtn = document.getElementById('startChatBtn');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', init);
@@ -23,8 +26,7 @@ async function init() {
     // Set up event listeners
     setupEventListeners();
     
-    // Start chat immediately
-    startChat();
+    // Don't auto-start chat - wait for button click
 }
 
 // Load FAQ data
@@ -79,6 +81,11 @@ function renderFAQCategories() {
 
 // Set up event listeners
 function setupEventListeners() {
+    // Start chat button
+    if (startChatBtn) {
+        startChatBtn.addEventListener('click', startChat);
+    }
+
     // Send button click
     sendButton.addEventListener('click', handleSend);
 
@@ -102,14 +109,26 @@ function setupEventListeners() {
     // Start chat link
     startChatLink.addEventListener('click', (e) => {
         e.preventDefault();
-        messageInput.focus();
+        if (startChatBtn) {
+            startChatBtn.click();
+        }
     });
 }
 
 // Start chat - show initial messages
 function startChat() {
+    // Hide welcome, show chat
+    if (chatWelcome) chatWelcome.style.display = 'none';
+    if (chatInterface) chatInterface.style.display = 'flex';
+    
+    // Show system message
     addSystemMessage('Connected to Docket Website Support');
-    addBotMessage('Hi there! 👋 How can I help you with your Docket website today?');
+    
+    // Show greeting after short delay
+    setTimeout(() => {
+        addBotMessage("Hi there! 👋 I'm here to help with your Docket website. What can I help you with today?");
+        if (messageInput) messageInput.focus();
+    }, 500);
 }
 
 // Handle send
@@ -128,29 +147,29 @@ async function handleSend() {
     showTypingIndicator();
 
     try {
-        // Send to API
+        // Send to API - Claude handles EVERYTHING
         const response = await fetch('/api/message', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                message,
-                conversationId
+                message: message,
+                conversationId: conversationId
             })
         });
 
         const data = await response.json();
 
+        // Realistic delay (2-4 seconds)
+        const delay = 2000 + Math.random() * 2000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+
         // Hide typing indicator
         hideTypingIndicator();
 
-        // Add realistic delay (1000-2000ms randomly)
-        const delay = 1000 + Math.random() * 1000;
-        await new Promise(resolve => setTimeout(resolve, delay));
-
         if (data.error) {
-            addBotMessage('Sorry, I encountered an error. Please try again.');
+            addBotMessage("I'm having trouble right now. Could you try again in a moment?");
             return;
         }
 
@@ -159,13 +178,13 @@ async function handleSend() {
             conversationId = data.conversationId;
         }
 
-        // Add bot response
+        // Show response from Claude
         addBotMessage(data.response);
 
     } catch (error) {
-        console.error('Error sending message:', error);
+        console.error('Error:', error);
         hideTypingIndicator();
-        addBotMessage('Sorry, I encountered an error. Please try again.');
+        addBotMessage("Something went wrong on my end. Mind trying that again?");
     }
 }
 

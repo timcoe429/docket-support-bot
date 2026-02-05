@@ -618,3 +618,81 @@ body {
         max-width: 95%;
     }
 }
+
+/* Welcome Screen */
+.chat-welcome {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.welcome-content {
+    text-align: center;
+    max-width: 400px;
+}
+
+.welcome-icon {
+    margin-bottom: 24px;
+}
+
+.welcome-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 8px;
+}
+
+.welcome-text {
+    font-size: 15px;
+    color: #64748b;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.welcome-stats {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.welcome-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.stat-dot {
+    width: 8px;
+    height: 8px;
+    background: #22c55e;
+    border-radius: 50%;
+}
+
+.start-chat-btn {
+    padding: 14px 32px;
+    background: #009ce6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.start-chat-btn:hover {
+    background: #0284c7;
+}
+
+/* Chat Interface wrapper */
+.chat-interface {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}

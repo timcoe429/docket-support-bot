@@ -47,16 +47,42 @@
                     </div>
                 </div>
 
-                <div class="chat-messages" id="chatMessages">
-                    <!-- Messages added dynamically -->
+                <!-- Welcome Screen (shown before chat starts) -->
+                <div class="chat-welcome" id="chatWelcome">
+                    <div class="welcome-content">
+                        <div class="welcome-icon">
+                            <svg viewBox="0 0 24 24" width="48" height="48"><path fill="#009ce6" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+                        </div>
+                        <h2 class="welcome-title">Hi there! 👋</h2>
+                        <p class="welcome-text">Our support team is here to help with your Docket website.</p>
+                        
+                        <div class="welcome-stats">
+                            <div class="welcome-stat">
+                                <span class="stat-dot"></span>
+                                <span>Team online</span>
+                            </div>
+                            <div class="welcome-stat">
+                                <span>Avg. response: under 2 min</span>
+                            </div>
+                        </div>
+                        
+                        <button class="start-chat-btn" id="startChatBtn">Start a Conversation</button>
+                    </div>
                 </div>
 
-                <div class="chat-input-container">
-                    <div class="chat-input-wrapper">
-                        <textarea class="chat-input" id="messageInput" placeholder="Type your message..." rows="1"></textarea>
-                        <button class="send-button" id="sendButton">
-                            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-                        </button>
+                <!-- Chat Interface (hidden until chat starts) -->
+                <div class="chat-interface" id="chatInterface" style="display: none;">
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Messages added dynamically -->
+                    </div>
+
+                    <div class="chat-input-container">
+                        <div class="chat-input-wrapper">
+                            <textarea class="chat-input" id="messageInput" placeholder="Type your message..." rows="1"></textarea>
+                            <button class="send-button" id="sendButton">
+                                <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </main>
