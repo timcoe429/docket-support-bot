@@ -3,7 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { getActiveConversation, createConversation, addMessage, getConversationMessages, updateConversationStatus } from '../lib/db.js';
 import { getAccountContext } from '../lib/churnzero.js';
-import { getClientProjectStatus, createSupportCard } from '../lib/trello.js';
+import { getClientProjectStatus, createSupportCard, findClientCard, formatProjectStatus } from '../lib/trello.js';
 import { searchKnowledgeBase } from '../lib/db.js';
 import { shouldEscalate } from '../lib/escalation.js';
 import { generateResponse } from '../lib/claude.js';
@@ -22,6 +22,24 @@ try {
 } catch (error) {
   console.error('Error loading FAQ data:', error);
   faqData = { categories: [] };
+}
+
+/**
+ * Extract company name from message (simple heuristic)
+ */
+function extractCompanyName(message) {
+  // Simple extraction - if message is short and doesn't contain question words,
+  // it might be a company name response
+  const questionWords = ['what', 'where', 'when', 'how', 'why', 'is', 'are', 'can', 'do', 'does'];
+  const lowerMessage = message.toLowerCase().trim();
+  
+  // If it's a short message (1-5 words) without question words, might be a company name
+  const words = lowerMessage.split(/\s+/);
+  if (words.length <= 5 && !questionWords.some(qw => lowerMessage.startsWith(qw))) {
+    return message.trim();
+  }
+  
+  return null;
 }
 
 /**
@@ -126,7 +144,13 @@ export default async function handler(req, res) {
     // Add user message to database
     await addMessage(conversation.id, 'user', message);
 
-    // Try to get context (stubbed for now)
+    // Check if user is asking about their project/website status
+    const statusKeywords = ['where', 'status', 'progress', 'update', 'my website', 'my site', 'how long', 'when will', 'waiting'];
+    const isAskingAboutStatus = statusKeywords.some(keyword => 
+        message.toLowerCase().includes(keyword)
+    );
+
+    // Try to get context
     let churnZeroContext = null;
     let trelloContext = null;
     let knowledgeBaseResults = [];
@@ -137,10 +161,26 @@ export default async function handler(req, res) {
       console.error('Error fetching ChurnZero context:', error);
     }
 
-    try {
-      trelloContext = await getClientProjectStatus('Test Account', 'anonymous');
-    } catch (error) {
-      console.error('Error fetching Trello context:', error);
+    // If asking about status, try to find their Trello card
+    if (isAskingAboutStatus) {
+      try {
+        const possibleCompanyName = extractCompanyName(message);
+        if (possibleCompanyName) {
+          const cardData = await findClientCard(possibleCompanyName);
+          if (cardData) {
+            trelloContext = formatProjectStatus(cardData);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching Trello context:', error);
+      }
+    } else {
+      // Fallback to old method for non-status queries (for compatibility)
+      try {
+        trelloContext = await getClientProjectStatus('Test Account', 'anonymous');
+      } catch (error) {
+        console.error('Error fetching Trello context:', error);
+      }
     }
 
     try {
