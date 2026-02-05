@@ -283,18 +283,6 @@ function addUserMessage(text) {
 
 // Get contextual quick actions based on response content
 function getQuickActions(content) {
-    const lowerContent = content.toLowerCase();
-
-    if (lowerContent.includes('login') || lowerContent.includes('wp-admin') || lowerContent.includes('password')) {
-        return ["I can't find the email", "Password doesn't work"];
-    }
-    if (lowerContent.includes('elementor') || lowerContent.includes('edit') && lowerContent.includes('page')) {
-        return ['Show me how', 'I need more help'];
-    }
-    if (lowerContent.includes('domain') || lowerContent.includes('dns')) {
-        return ["I don't understand", 'Can someone help me?'];
-    }
-
     return [];
 }
 
