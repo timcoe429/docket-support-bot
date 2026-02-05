@@ -1,60 +1,43 @@
 # Current Plan
 
-## Last Updated
-January 25, 2026
+## Completed This Session
+- ✅ Fixed Trello Board ID (was missing from env vars)
+- ✅ Added welcome screen with 4 category buttons (Website Build Status, Edits, Login, Something Else)
+- ✅ Green hover effects on category buttons (#7eb10f)
+- ✅ Category-specific greetings when chat starts
+- ✅ Fixed welcome screen sizing (was too small)
+- ✅ Removed quick action buttons (were showing irrelevant options)
+- ✅ Updated Claude system prompt (multiple iterations)
+- ✅ Added debug logging for Trello lookups
 
-## What's Complete
-- Project structure created
-- Migration from Railway + Supabase to Vercel + Neon
-- Database tables created in Neon
-- Trello escalation integration (replaces email)
-- FAQ data structure with 7 categories, 52+ items
-- Two-panel support center layout (FAQ + Chat)
-- FAQ JSON moved to /public/faq.json for Vercel serving
-- Build validation script added (npm run build)
+## Current Issue
+Trello lookup uses dumb pattern matching instead of letting Claude decide. When user says "GoDaddy" (their registrar), our code searches Trello for "GoDaddy" as a company name. Claude knows GoDaddy is a registrar, but our code doesn't let Claude make that call.
 
-## What's In Progress
-- **VISUAL REDESIGN** - Comprehensive UI overhaul completed
-  - Unified header bar implemented
-  - Card-based FAQ categories with icons and badges
-  - Elevated search bar with glow effects
-  - Improved chat welcome state with friendly messaging
-  - Micro-interactions and animations added
-  - Minimized panel states enhanced
-  - Modern color system and typography applied
-  - **Status: Implementation complete, ready for testing and iteration**
+## Next Up: New Architecture
+Moving to "Claude in Control" approach:
 
-## What's Next (Immediate Priority)
-1. **Test locally** - Kill node processes, run `npx vercel dev`, check browser
-2. **Iterate on look and feel** - Review what was built, identify issues, refine
-3. **Continue polishing until it looks premium** - Not done until it feels Fortune 500
-4. **Fix any bugs or visual issues** discovered during testing
+### Phase 1: Knowledge Base
+- Create `/knowledge` folder with markdown docs
+- Folders: domain-access, build-stages, website-editing, login-help, escalation
+- Docs are editable via GitHub by team
+- Build loader that pulls relevant docs by category
 
-## Visual Redesign Goals (Reference)
-- Unified header bar (logo, title, online status)
-- Card-based FAQ categories with icons and article counts
-- Elevated search bar with glow effects on focus
-- Improved chat panel with friendly welcome state ("Hey there! 👋")
-- Micro-interactions (hover lifts, background slides, pulse animations)
-- Better minimized panel states (actually useful, not just a label)
-- Depth via shadows, warmth via gradients, modern typography
-- Mobile: Bottom tab bar with icons
+### Phase 2: Claude Tools
+- Give Claude a `lookup_project` tool (searches Trello)
+- Claude decides when to call it (not our code guessing)
+- Later: `create_ticket` tool for escalation
 
-## After Visual Polish is Complete
-1. Connect real APIs (Trello, ChurnZero, Claude) when keys available
-2. Deploy to Vercel production
-3. Point support.yourdocketonline.com to Vercel
-4. Test with real users
+### Phase 3: Simplify
+- Strip system prompt to just personality/tone
+- Remove all pattern matching logic
+- Let Claude be Claude
 
-## Known Issues / Blockers
-- ChurnZero API key not yet available
-- Trello API keys not yet configured (using stubs)
-- Claude API key not yet added
-- DNS for support.yourdocketonline.com not configured
+## Blocked On
+Nothing — ready to build Phase 1
 
-## Notes
-- All external API calls are stubbed with console.log for testing
-- FAQ search works with keyword matching
-- Escalation triggers create Trello cards (stubbed)
-- Chat has fake "connecting" delay (5-8 seconds) for realism
-- **The UI must feel modern, polished, and premium before we move on**
+## Files Modified This Session
+- /public/index.html (welcome screen with category buttons)
+- /public/styles.css (category button styles, sizing)
+- /public/chat.js (category handlers, startChatWithCategory, removed quick actions)
+- /api/message.js (category param, debug logging)
+- /lib/claude.js (system prompt updates, debug logging)

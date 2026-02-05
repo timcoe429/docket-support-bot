@@ -32,3 +32,22 @@ Website clients (roll-off dumpster businesses) who ask repetitive questions, oft
 ## Key URLs
 - Chat will live at: support.yourdocketonline.com
 - Escalation creates cards on Trello support board
+
+## Current State
+
+### Working
+- Welcome screen with 4 category buttons
+- Category-specific chat greetings
+- Trello API connected (reads cards, stages, custom fields)
+- Claude API integration (Sonnet 4)
+- Basic conversation flow
+
+### Broken/In Progress
+- Trello lookup logic (pattern matching, needs to be Claude-controlled tool)
+- Claude responses still too long/wall-of-text
+- No knowledge base yet
+
+### Next Build
+- `/knowledge` folder with markdown docs
+- Knowledge loader by category
+- Claude tools (lookup_project, create_ticket)

@@ -51,3 +51,32 @@
 **Iterate until it's right**
 - Chose: Continue refining visuals until it looks premium
 - Why: First implementation looked "5th grader" quality. We don't ship until it looks Fortune 500. This is a client-facing tool.
+
+## 2024-02-05
+
+### Category Buttons on Welcome Screen
+- 4 categories: Website Build Status, Edits & Changes, Login & Access, Something Else
+- Green hover effect (#7eb10f) matching Docket brand
+- Professional "How can we help?" — no emoji, no chatbot vibe
+
+### Remove Quick Action Buttons
+- Were doing keyword matching that showed irrelevant options
+- Better to have no buttons than wrong buttons
+- Can revisit later with smarter implementation
+
+### Knowledge Base Architecture
+- Using markdown files in `/knowledge` folder (not FAQ JSON)
+- Reasons: scales better, natural prose for Claude, easy GitHub editing
+- Structure: domain-access/, build-stages/, website-editing/, login-help/, escalation/
+
+### Claude Tools Approach
+- Give Claude tools to call (Trello lookup, ticket creation)
+- Let Claude decide when to use them
+- Stop pre-processing/pattern matching in our code
+- "Claude in Control" — our code routes, Claude thinks
+
+### Domain Access Flow
+- We request ADMIN ACCESS, not login credentials
+- GoDaddy uses "Delegate Access" — we send email invite
+- Never ask for passwords
+- Support email: websites@yourdocket.com
