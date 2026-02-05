@@ -144,15 +144,56 @@ export default async function handler(req, res) {
     // Add user message to database
     await addMessage(conversation.id, 'user', message);
 
-    // Check if user is asking about their project/website status
+    // Get conversation history for checking recent messages and for Claude
+    const previousMessages = await getConversationMessages(conversation.id);
+    const history = previousMessages.map(msg => ({
+      role: msg.role,
+      content: msg.content
+    }));
+
+    // Check if this message or recent conversation is about project status
+    let trelloContext = null;
+
     const statusKeywords = ['where', 'status', 'progress', 'update', 'my website', 'my site', 'how long', 'when will', 'waiting'];
-    const isAskingAboutStatus = statusKeywords.some(keyword => 
-        message.toLowerCase().includes(keyword)
+    const currentMessageAsksStatus = statusKeywords.some(kw => message.toLowerCase().includes(kw));
+
+    // Check if recent messages asked about status (user might be providing company name as follow-up)
+    const recentAskedStatus = history.slice(-4).some(msg => 
+        msg.role === 'user' && statusKeywords.some(kw => msg.content.toLowerCase().includes(kw))
     );
+
+    // Also check if this looks like a company name (short message, no question words)
+    const looksLikeCompanyName = message.split(/\s+/).length <= 5 && 
+        !['what', 'where', 'when', 'how', 'why', 'is', 'are', 'can', 'do', 'does', 'will'].some(qw => 
+            message.toLowerCase().startsWith(qw)
+        );
+
+    // Try Trello lookup if: asking about status OR recent convo asked about status and this looks like a company name
+    if (currentMessageAsksStatus || (recentAskedStatus && looksLikeCompanyName)) {
+        try {
+            // Try the current message as a company name
+            let cardData = await findClientCard(message);
+            
+            // If not found and we have history, try recent messages
+            if (!cardData && history.length > 0) {
+                for (const msg of history.slice(-4)) {
+                    if (msg.role === 'user') {
+                        cardData = await findClientCard(msg.content);
+                        if (cardData) break;
+                    }
+                }
+            }
+            
+            if (cardData) {
+                trelloContext = formatProjectStatus(cardData);
+            }
+        } catch (error) {
+            console.error('Error fetching Trello context:', error);
+        }
+    }
 
     // Try to get context
     let churnZeroContext = null;
-    let trelloContext = null;
     let knowledgeBaseResults = [];
 
     try {
@@ -161,40 +202,11 @@ export default async function handler(req, res) {
       console.error('Error fetching ChurnZero context:', error);
     }
 
-    // If asking about status, try to find their Trello card
-    if (isAskingAboutStatus) {
-      try {
-        const possibleCompanyName = extractCompanyName(message);
-        if (possibleCompanyName) {
-          const cardData = await findClientCard(possibleCompanyName);
-          if (cardData) {
-            trelloContext = formatProjectStatus(cardData);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching Trello context:', error);
-      }
-    } else {
-      // Fallback to old method for non-status queries (for compatibility)
-      try {
-        trelloContext = await getClientProjectStatus('Test Account', 'anonymous');
-      } catch (error) {
-        console.error('Error fetching Trello context:', error);
-      }
-    }
-
     try {
       knowledgeBaseResults = await searchKnowledgeBase(message);
     } catch (error) {
       console.error('Error searching knowledge base:', error);
     }
-
-    // Get conversation history for Claude (excluding current message)
-    const previousMessages = await getConversationMessages(conversation.id);
-    const conversationHistory = previousMessages.map(msg => ({
-      role: msg.role, // Already 'user' or 'assistant' from DB
-      content: msg.content
-    }));
 
     // Build context object for Claude
     const context = {
@@ -214,7 +226,7 @@ export default async function handler(req, res) {
       try {
         const claudeResponse = await generateResponse(
           message, // current user message
-          conversationHistory, // previous messages
+          history, // previous messages (already formatted)
           context // ChurnZero, Trello, KB context
         );
         botResponse = claudeResponse.response; // Note: Claude returns {response, usage, stopReason}
