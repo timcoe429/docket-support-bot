@@ -121,6 +121,10 @@ export default async function handler(req, res) {
   try {
     const { message, conversationId, category } = req.body;
 
+    console.log('=== REQUEST DEBUG ===');
+    console.log('Message:', message);
+    console.log('Category:', category);
+
     if (!message) {
       return res.status(400).json({ error: 'Message is required' });
     }
@@ -156,13 +160,18 @@ export default async function handler(req, res) {
 
     // If user selected "status" category, always try Trello lookup with their message
     if (category === 'status') {
+        console.log('Status category detected, attempting Trello lookup for:', message);
         try {
             const cardData = await findClientCard(message);
+            console.log('Trello card data:', cardData);
             if (cardData) {
                 trelloContext = formatProjectStatus(cardData);
+                console.log('Formatted Trello context:', trelloContext);
+            } else {
+                console.log('No card found for:', message);
             }
         } catch (error) {
-            console.error('Error fetching Trello context for status category:', error);
+            console.error('Trello lookup error:', error);
         }
     }
 
