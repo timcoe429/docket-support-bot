@@ -2,7 +2,6 @@
 let faqData = null;
 let conversationId = null;
 let chatConnected = false;
-let engagementState = 'none'; // 'none', 'faq', 'chat'
 let currentSearchTerm = '';
 
 // Category icon mapping - removed emojis for professional look
@@ -165,7 +164,6 @@ function renderFAQCategories(searchTerm = '') {
             // Expand on click
             question.addEventListener('click', () => {
                 itemDiv.classList.toggle('expanded');
-                setEngagement('faq');
             });
             
             itemsDiv.appendChild(itemDiv);
@@ -177,7 +175,6 @@ function renderFAQCategories(searchTerm = '') {
         // Toggle category on header click
         header.addEventListener('click', () => {
             categoryDiv.classList.toggle('expanded');
-            setEngagement('faq');
         });
         
         faqCategories.appendChild(categoryDiv);
@@ -189,40 +186,11 @@ function escapeRegex(str) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-// Set engagement state and resize panels
-function setEngagement(state) {
-    if (engagementState === state) return;
-    
-    engagementState = state;
-    
-    if (window.innerWidth > 768) {
-        // Desktop: resize panels
-        if (state === 'faq') {
-            faqPanel.classList.remove('minimized');
-            faqPanel.classList.add('expanded');
-            chatPanel.classList.remove('expanded');
-            chatPanel.classList.add('minimized');
-        } else if (state === 'chat') {
-            chatPanel.classList.remove('minimized');
-            chatPanel.classList.add('expanded');
-            faqPanel.classList.remove('expanded');
-            faqPanel.classList.add('minimized');
-        } else {
-            // Reset to 50/50
-            faqPanel.classList.remove('expanded', 'minimized');
-            chatPanel.classList.remove('expanded', 'minimized');
-        }
-    }
-}
-
 // Setup event listeners
 function setupEventListeners() {
     // FAQ search
     faqSearch.addEventListener('input', (e) => {
         renderFAQCategories(e.target.value);
-        if (e.target.value) {
-            setEngagement('faq');
-        }
     });
     
     // Start chat button
@@ -231,7 +199,6 @@ function setupEventListeners() {
     // FAQ footer link - triggers chat expansion and connection
     faqChatLink.addEventListener('click', (e) => {
         e.preventDefault();
-        setEngagement('chat');
         if (window.innerWidth < 768) {
             switchToTab('chat');
         }
@@ -256,17 +223,7 @@ function setupEventListeners() {
     const faqToggleOverlay = faqPanel.querySelector('.panel-toggle-overlay');
     const chatToggleOverlay = chatPanel.querySelector('.panel-toggle-overlay');
     
-    if (faqToggleOverlay) {
-        faqToggleOverlay.addEventListener('click', () => {
-            setEngagement('faq');
-        });
-    }
-    
-    if (chatToggleOverlay) {
-        chatToggleOverlay.addEventListener('click', () => {
-            setEngagement('chat');
-        });
-    }
+    // Note: Panel toggle overlays removed - panels now maintain fixed widths
 }
 
 // Switch mobile tab
@@ -317,7 +274,6 @@ async function startChat() {
     messageInput.disabled = false;
     sendButton.disabled = false;
     chatConnected = true;
-    setEngagement('chat');
     
     // Focus input
     messageInput.focus();
@@ -420,7 +376,6 @@ async function sendMessage(message) {
         
         // Add user message
         addUserMessage(message);
-        setEngagement('chat');
         
         // Show typing indicator
         showTypingIndicator();

@@ -112,22 +112,13 @@ body {
 
 /* FAQ Panel */
 .faq-panel {
-    width: 32%;
+    width: 35%;
     background: var(--bg-panel);
     display: flex;
     flex-direction: column;
-    transition: width 0.3s ease;
     overflow: hidden;
     border-right: 1px solid var(--border);
     z-index: 1;
-}
-
-.faq-panel.expanded {
-    width: 40%;
-}
-
-.faq-panel.minimized {
-    width: 25%;
 }
 
 .faq-panel-content {
@@ -425,21 +416,12 @@ body {
 
 /* Chat Panel */
 .chat-panel {
-    width: 68%;
+    width: 65%;
     background: var(--bg-white);
     display: flex;
     flex-direction: column;
-    transition: width 0.3s ease;
     overflow: hidden;
     z-index: 1;
-}
-
-.chat-panel.expanded {
-    width: 75%;
-}
-
-.chat-panel.minimized {
-    width: 60%;
 }
 
 /* Chat Header */
@@ -845,105 +827,7 @@ body {
     background: var(--bg-hover);
 }
 
-/* Minimized Panel Views */
-.faq-panel.minimized .faq-panel-content {
-    display: flex;
-    flex-direction: column;
-    padding: 16px;
-}
-
-.faq-panel.minimized .faq-header {
-    padding: 12px;
-}
-
-.faq-panel.minimized .faq-search-container {
-    padding: 10px 14px;
-}
-
-.faq-panel.minimized .faq-search-input {
-    font-size: 13px;
-}
-
-.faq-panel.minimized .faq-categories {
-    padding: 12px;
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    flex-wrap: nowrap;
-}
-
-.faq-panel.minimized .faq-category {
-    min-width: 120px;
-    padding: 12px 16px;
-    margin-bottom: 0;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.faq-panel.minimized .faq-category-header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 8px;
-}
-
-.faq-panel.minimized .faq-category-icon {
-    font-size: 20px;
-}
-
-.faq-panel.minimized .faq-category-title {
-    font-size: 13px;
-    margin-bottom: 0;
-}
-
-.faq-panel.minimized .faq-category-description,
-.faq-panel.minimized .faq-category-badge,
-.faq-panel.minimized .faq-category-toggle,
-.faq-panel.minimized .faq-category-items {
-    display: none;
-}
-
-.faq-panel.minimized .faq-footer {
-    display: none;
-}
-
-.chat-panel.minimized .chat-header {
-    display: block;
-    padding: 12px 16px;
-}
-
-.chat-panel.minimized .chat-header-content {
-    justify-content: center;
-}
-
-.chat-panel.minimized .chat-title {
-    font-size: 14px;
-}
-
-.chat-panel.minimized .messages-container {
-    display: none;
-}
-
-.chat-panel.minimized .input-container {
-    display: block;
-    padding: 12px 16px;
-}
-
-.chat-panel.minimized .message-input {
-    font-size: 13px;
-    padding: 10px 16px;
-}
-
-.chat-panel.minimized .send-button {
-    width: 40px;
-    height: 40px;
-}
-
-.chat-panel.minimized .panel-toggle-overlay {
-    display: none;
-}
+/* Note: Minimized panel views removed - panels now maintain fixed widths */
 
 .panel-toggle-overlay {
     display: none;
@@ -1004,18 +888,6 @@ body {
 
     .chat-panel.active {
         transform: translateX(0);
-    }
-
-    .faq-panel.expanded,
-    .faq-panel.minimized,
-    .chat-panel.expanded,
-    .chat-panel.minimized {
-        width: 100%;
-    }
-
-    .faq-panel.minimized::after,
-    .chat-panel.minimized::after {
-        display: none;
     }
 
     .mobile-tabs {
