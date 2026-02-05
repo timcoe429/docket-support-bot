@@ -6,6 +6,7 @@ import { getAccountContext } from '../lib/churnzero.js';
 import { getClientProjectStatus, createSupportCard } from '../lib/trello.js';
 import { searchKnowledgeBase } from '../lib/db.js';
 import { shouldEscalate } from '../lib/escalation.js';
+import { generateResponse } from '../lib/claude.js';
 
 // Get current directory for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -148,6 +149,20 @@ export default async function handler(req, res) {
       console.error('Error searching knowledge base:', error);
     }
 
+    // Get conversation history for Claude (excluding current message)
+    const previousMessages = await getConversationMessages(conversation.id);
+    const conversationHistory = previousMessages.map(msg => ({
+      role: msg.role, // Already 'user' or 'assistant' from DB
+      content: msg.content
+    }));
+
+    // Build context object for Claude
+    const context = {
+      churnZero: churnZeroContext || null,
+      trello: trelloContext || null,
+      knowledgeBase: knowledgeBaseResults || []
+    };
+
     // Generate response
     let botResponse = '';
     let faqMatch = null;
@@ -162,8 +177,21 @@ export default async function handler(req, res) {
       if (faqMatch) {
         botResponse = faqMatch.answer;
       } else {
-        // Placeholder response
-        botResponse = "I'm looking into that. For now, this is a test response.";
+        // Call Claude to generate AI response
+        try {
+          const claudeResponse = await generateResponse(
+            message, // current user message
+            conversationHistory, // previous messages
+            context // ChurnZero, Trello, KB context
+          );
+          botResponse = claudeResponse.response; // Note: Claude returns {response, usage, stopReason}
+        } catch (error) {
+          console.error('Claude API error:', error);
+          // Fallback: friendly message and trigger escalation
+          botResponse = "I'm having trouble connecting right now. Let me create a support ticket so our team can help you directly.";
+          escalationTriggered = true;
+          escalationReason = 'Claude API error: ' + error.message;
+        }
       }
     }
 
