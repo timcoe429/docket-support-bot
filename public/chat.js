@@ -1,5 +1,6 @@
 // State
 let conversationId = null;
+let selectedCategory = null;
 let faqData = { categories: [] };
 
 // DOM Elements
@@ -109,26 +110,62 @@ function setupEventListeners() {
     // Start chat link
     startChatLink.addEventListener('click', (e) => {
         e.preventDefault();
-        if (startChatBtn) {
-            startChatBtn.click();
-        }
+        startChatWithCategory('other');
+    });
+
+    // Category button clicks
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const category = btn.dataset.category;
+            startChatWithCategory(category);
+        });
     });
 }
 
-// Start chat - show initial messages
-function startChat() {
+// Start chat with selected category
+async function startChatWithCategory(category) {
+    selectedCategory = category;
+    
     // Hide welcome, show chat
     if (chatWelcome) chatWelcome.style.display = 'none';
     if (chatInterface) chatInterface.style.display = 'flex';
     
-    // Show system message
+    // Show connecting message
+    addSystemMessage('Give us a moment while we connect you with support...');
+    
+    // Brief pause (1.5 seconds)
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Show connected message
     addSystemMessage('Connected to Docket Website Support');
     
-    // Show greeting after short delay
-    setTimeout(() => {
-        addBotMessage("Hi there! 👋 I'm here to help with your Docket website. What can I help you with today?");
-        if (messageInput) messageInput.focus();
-    }, 500);
+    // Show typing indicator
+    showTypingIndicator();
+    
+    // Wait 2-3 seconds (feels like agent is typing greeting)
+    const typingDelay = 2000 + Math.random() * 1000;
+    await new Promise(resolve => setTimeout(resolve, typingDelay));
+    
+    // Hide typing indicator
+    hideTypingIndicator();
+    
+    // Show tailored greeting based on category
+    const greetings = {
+        status: "Hi there! I can help you check on your website build. What's the name of your company?",
+        editing: "Hi! I'd be happy to help you make changes to your website. What are you trying to update?",
+        login: "Hi! Let's get you logged in. Are you having trouble with your password, or can't find your login details?",
+        other: "Hi! How can I help you today?"
+    };
+    
+    addBotMessage(greetings[category] || greetings.other);
+    
+    // Focus the input
+    if (messageInput) messageInput.focus();
+}
+
+// Start chat - show initial messages
+function startChat() {
+    startChatWithCategory('other');
 }
 
 // Handle send
@@ -155,7 +192,8 @@ async function handleSend() {
             },
             body: JSON.stringify({
                 message: message,
-                conversationId: conversationId
+                conversationId: conversationId,
+                category: selectedCategory
             })
         });
 

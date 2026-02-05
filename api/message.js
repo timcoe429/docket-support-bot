@@ -119,7 +119,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message } = req.body;
+    const { message, conversationId, category } = req.body;
 
     if (!message) {
       return res.status(400).json({ error: 'Message is required' });
@@ -153,6 +153,18 @@ export default async function handler(req, res) {
 
     // Check if this message or recent conversation is about project status
     let trelloContext = null;
+
+    // If user selected "status" category, always try Trello lookup with their message
+    if (category === 'status') {
+        try {
+            const cardData = await findClientCard(message);
+            if (cardData) {
+                trelloContext = formatProjectStatus(cardData);
+            }
+        } catch (error) {
+            console.error('Error fetching Trello context for status category:', error);
+        }
+    }
 
     const statusKeywords = ['where', 'status', 'progress', 'update', 'my website', 'my site', 'how long', 'when will', 'waiting'];
     const currentMessageAsksStatus = statusKeywords.some(kw => message.toLowerCase().includes(kw));
