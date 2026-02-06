@@ -2,132 +2,202 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Docket Support Center</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docket Support</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="https://yourdocketonline.com/wp-content/uploads/2025/04/cropped-Blue-Favicon-32x32.png" type="image/png">
 </head>
 <body>
-    <div class="app">
-        <!-- Main Header -->
-        <header class="main-header">
-            <div class="header-logo">
-                <img src="https://yourdocketonline.com/wp-content/uploads/2025/04/highres-blue-docket-dumpster-software-e1746022365938-300x261.png" alt="Docket" height="40">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo-mark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                    <path d="M2 17l10 5 10-5"/>
+                    <path d="M2 12l10 5 10-5"/>
+                </svg>
             </div>
-            <div class="header-title">Docket Support Center</div>
-            <div class="header-status">
-                <span class="status-dot"></span>
-                <span>Online</span>
+            <span class="header-title">Docket Support</span>
+        </div>
+        <div class="header-right">
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                <span class="status-text">We're online</span>
             </div>
-        </header>
+        </div>
+    </header>
+
+    <!-- FAQ Overlay (mobile backdrop) -->
+    <div class="faq-overlay" id="faqOverlay"></div>
+
+    <!-- Main Layout -->
+    <div class="layout" id="layout">
+        <!-- FAQ Panel (slide-out) -->
+        <aside class="faq-panel" id="faqPanel">
+            <div class="faq-panel-header">
+                <h2 class="faq-panel-title">Help Articles</h2>
+                <button class="faq-close-btn" id="faqCloseBtn" aria-label="Close FAQ panel">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="faq-search-wrapper">
+                <input type="text" class="faq-search" id="faqSearch" placeholder="Search articles...">
+            </div>
+            <div class="faq-list" id="faqList">
+                <!-- FAQ categories loaded dynamically -->
+            </div>
+        </aside>
 
         <!-- Main Content -->
         <div class="main-content">
-            <!-- FAQ Panel -->
-            <aside class="faq-panel">
-                <div class="faq-search">
-                    <input type="text" id="faqSearch" placeholder="Search for help...">
+            <!-- Welcome View -->
+            <div class="welcome-view" id="welcomeView">
+                <div class="welcome">
+                    <h1>How can we help?</h1>
+                    <p>Get answers about your website build, edits, login, and more.</p>
                 </div>
 
-                <div class="faq-categories" id="faqCategories">
-                    <!-- Categories loaded dynamically -->
-                </div>
-
-                <div class="faq-footer">
-                    <a href="#" class="faq-footer-link" id="startChatLink">Can't find what you're looking for? Chat with us →</a>
-                </div>
-            </aside>
-
-            <!-- Chat Panel -->
-            <main class="chat-panel">
-                <div class="chat-header">
-                    <div class="chat-header-info">
-                        <div class="chat-header-title">Docket Website Support Team</div>
-                        <div class="chat-header-subtitle">We typically reply within a few minutes</div>
-                    </div>
-                </div>
-
-                <!-- Welcome Screen (shown before chat starts) -->
-                <div class="chat-welcome" id="chatWelcome">
-                    <div class="welcome-content">
-                        <h2 class="welcome-title">How can we help?</h2>
-                        <p class="welcome-text">Select a topic to get started</p>
-
-                        <div class="category-buttons">
-                            <button class="category-btn" data-category="status">
-                                <div class="category-icon">
-                                    <svg viewBox="0 0 24 24"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 3.21-1.92 6-4.72 7.28L13 17v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.95-9.45-9-9.95zM11 2.05C5.94 2.55 2 6.81 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5v-5l-2.28 2.28C6.92 18 5 15.21 5 12c0-4.08 3.05-7.44 7-7.93V2.05z"/></svg>
-                                </div>
-                                <div class="category-info">
-                                    <div class="category-title">Website Build Status</div>
-                                    <div class="category-desc">Check where your project is at</div>
-                                </div>
-                                <span class="category-arrow">›</span>
-                            </button>
-
-                            <button class="category-btn" data-category="editing">
-                                <div class="category-icon">
-                                    <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                                </div>
-                                <div class="category-info">
-                                    <div class="category-title">Website Edits & Changes</div>
-                                    <div class="category-desc">Help with updating your site</div>
-                                </div>
-                                <span class="category-arrow">›</span>
-                            </button>
-
-                            <button class="category-btn" data-category="login">
-                                <div class="category-icon">
-                                    <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-                                </div>
-                                <div class="category-info">
-                                    <div class="category-title">Login & Access</div>
-                                    <div class="category-desc">Password or login issues</div>
-                                </div>
-                                <span class="category-arrow">›</span>
-                            </button>
-
-                            <button class="category-btn" data-category="other">
-                                <div class="category-icon">
-                                    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
-                                </div>
-                                <div class="category-info">
-                                    <div class="category-title">Something Else</div>
-                                    <div class="category-desc">Other questions or help</div>
-                                </div>
-                                <span class="category-arrow">›</span>
-                            </button>
+                <!-- Topic Cards Grid -->
+                <div class="topics">
+                    <div class="topic-card build-status" data-category="status">
+                        <div class="topic-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
                         </div>
+                        <div class="topic-title">Website Build Status</div>
+                        <div class="topic-desc">Check where your project is at</div>
+                        <div class="topic-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                        </div>
+                    </div>
 
-                        <div class="welcome-footer">
-                            <div class="welcome-stat">
-                                <span class="stat-dot"></span>
-                                <span>Support team online</span>
-                            </div>
-                            <div class="welcome-stat">
-                                <span>Avg. response under 2 min</span>
-                            </div>
+                    <div class="topic-card edits" data-category="edits">
+                        <div class="topic-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 20h9"/>
+                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                            </svg>
+                        </div>
+                        <div class="topic-title">Website Edits & Changes</div>
+                        <div class="topic-desc">Help with updating your site</div>
+                        <div class="topic-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="topic-card login" data-category="login">
+                        <div class="topic-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                        </div>
+                        <div class="topic-title">Login & Access</div>
+                        <div class="topic-desc">Password or login issues</div>
+                        <div class="topic-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="topic-card other" data-category="other">
+                        <div class="topic-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                        </div>
+                        <div class="topic-title">Something Else</div>
+                        <div class="topic-desc">Other questions or help</div>
+                        <div class="topic-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
                         </div>
                     </div>
                 </div>
 
-                <!-- Chat Interface (hidden until chat starts) -->
-                <div class="chat-interface" id="chatInterface" style="display: none;">
-                    <div class="chat-messages" id="chatMessages">
-                        <!-- Messages added dynamically -->
-                    </div>
+                <!-- Divider -->
+                <div class="divider">
+                    <span>OR TYPE ANYTHING</span>
+                </div>
 
-                    <div class="chat-input-container">
-                        <div class="chat-input-wrapper">
-                            <textarea class="chat-input" id="messageInput" placeholder="Type your message..." rows="1"></textarea>
-                            <button class="send-button" id="sendButton">
-                                <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-                            </button>
-                        </div>
+                <!-- Chat Input (Welcome View) -->
+                <div class="chat-input-wrapper">
+                    <input type="text" class="chat-input" id="welcomeInput" placeholder="Ask us anything about your website...">
+                    <button class="send-button" id="welcomeSendBtn" aria-label="Send message">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"/>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Chat Hint -->
+                <div class="chat-hint">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    <span>Avg. response under 2 min</span>
+                </div>
+
+                <!-- Browse Help Articles Button -->
+                <div class="articles-link">
+                    <a href="#" id="articlesToggle" class="articles-link-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                        </svg>
+                        <span>Browse help articles</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Chat View -->
+            <div class="chat-view" id="chatView">
+                <button class="back-button" id="backButton">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    <span>Back</span>
+                </button>
+
+                <div class="messages-area" id="chatMessages">
+                    <!-- Messages added dynamically -->
+                </div>
+
+                <div class="chat-view-input">
+                    <div class="chat-input-wrapper">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Ask us anything about your website...">
+                        <button class="send-button" id="chatSendBtn" aria-label="Send message">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>
-            </main>
+            </div>
         </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        Powered by Docket
     </div>
 
     <script src="chat.js"></script>

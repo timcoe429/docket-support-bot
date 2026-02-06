@@ -1,18 +1,25 @@
-// State
+// State Variables
+let faqOpen = false;
 let conversationId = null;
 let selectedCategory = null;
-let faqData = { categories: [] };
 
 // DOM Elements
-const chatMessages = document.getElementById('chatMessages');
-const messageInput = document.getElementById('messageInput');
-const sendButton = document.getElementById('sendButton');
-const faqCategories = document.getElementById('faqCategories');
+const faqPanel = document.getElementById('faqPanel');
+const faqOverlay = document.getElementById('faqOverlay');
+const faqList = document.getElementById('faqList');
 const faqSearch = document.getElementById('faqSearch');
-const startChatLink = document.getElementById('startChatLink');
-const chatWelcome = document.getElementById('chatWelcome');
-const chatInterface = document.getElementById('chatInterface');
-const startChatBtn = document.getElementById('startChatBtn');
+const faqCloseBtn = document.getElementById('faqCloseBtn');
+const articlesToggle = document.getElementById('articlesToggle');
+const layout = document.getElementById('layout');
+const welcomeView = document.getElementById('welcomeView');
+const chatView = document.getElementById('chatView');
+const chatMessages = document.getElementById('chatMessages');
+const welcomeInput = document.getElementById('welcomeInput');
+const welcomeSendBtn = document.getElementById('welcomeSendBtn');
+const chatInput = document.getElementById('chatInput');
+const chatSendBtn = document.getElementById('chatSendBtn');
+const backButton = document.getElementById('backButton');
+const topicCards = document.querySelectorAll('.topic-card');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', init);
@@ -22,13 +29,14 @@ async function init() {
     await loadFAQ();
     
     // Render FAQ categories
-    renderFAQCategories();
+    renderFaqCategories(faqData);
     
     // Set up event listeners
     setupEventListeners();
-    
-    // Don't auto-start chat - wait for button click
 }
+
+// FAQ Data
+let faqData = { categories: [] };
 
 // Load FAQ data
 async function loadFAQ() {
@@ -37,154 +45,223 @@ async function loadFAQ() {
         faqData = await response.json();
     } catch (error) {
         console.error('Error loading FAQ:', error);
+        faqData = { categories: [] };
     }
-}
-
-// Render FAQ categories
-function renderFAQCategories() {
-    faqCategories.innerHTML = faqData.categories.map(category => `
-        <div class="faq-category" data-category-id="${category.id}">
-            <div class="faq-category-header">
-                <div class="faq-category-info">
-                    <div class="faq-category-title">${category.name}</div>
-                    <div class="faq-category-description">${category.description || ''}</div>
-                    <div class="faq-category-meta">${category.items.length} articles</div>
-                </div>
-                <span class="faq-category-arrow">▼</span>
-            </div>
-            <div class="faq-items">
-                ${category.items.map(item => `
-                    <div class="faq-item" data-item-id="${item.id}">
-                        <div class="faq-item-question">${item.question}</div>
-                        <div class="faq-item-answer">${item.answer}</div>
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-    `).join('');
-
-    // Add click handlers for categories
-    document.querySelectorAll('.faq-category-header').forEach(header => {
-        header.addEventListener('click', () => {
-            const category = header.closest('.faq-category');
-            category.classList.toggle('expanded');
-        });
-    });
-
-    // Add click handlers for FAQ items
-    document.querySelectorAll('.faq-item-question').forEach(question => {
-        question.addEventListener('click', () => {
-            const item = question.closest('.faq-item');
-            item.classList.toggle('expanded');
-        });
-    });
 }
 
 // Set up event listeners
 function setupEventListeners() {
-    // Start chat button
-    if (startChatBtn) {
-        startChatBtn.addEventListener('click', startChat);
-    }
+    // Topic card clicks
+    topicCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const category = card.dataset.category;
+            startChat(category);
+        });
+    });
 
-    // Send button click
-    sendButton.addEventListener('click', handleSend);
-
-    // Enter key to send (Shift+Enter for new line)
-    messageInput.addEventListener('keydown', (e) => {
+    // Welcome input (Enter key)
+    welcomeInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            handleSend();
+            handleWelcomeSend();
         }
     });
 
-    // Auto-resize textarea
-    messageInput.addEventListener('input', () => {
-        messageInput.style.height = 'auto';
-        messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
+    welcomeSendBtn.addEventListener('click', handleWelcomeSend);
+
+    // Chat input (Enter key)
+    chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
     });
+
+    chatSendBtn.addEventListener('click', sendMessage);
+
+    // Back button
+    backButton.addEventListener('click', goBack);
+
+    // FAQ panel toggle
+    articlesToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleFaqPanel();
+    });
+
+    faqCloseBtn.addEventListener('click', toggleFaqPanel);
+    faqOverlay.addEventListener('click', toggleFaqPanel);
 
     // FAQ search
-    faqSearch.addEventListener('input', handleFAQSearch);
-
-    // Start chat link
-    startChatLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        startChatWithCategory('other');
-    });
-
-    // Category button clicks
-    document.querySelectorAll('.category-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const category = btn.dataset.category;
-            startChatWithCategory(category);
-        });
+    faqSearch.addEventListener('input', (e) => {
+        filterFaq(e.target.value);
     });
 }
 
-// Start chat with selected category
-async function startChatWithCategory(category) {
+// FAQ Panel Functions
+function toggleFaqPanel() {
+    faqOpen = !faqOpen;
+    
+    faqPanel.classList.toggle('open');
+    faqOverlay.classList.toggle('visible');
+    articlesToggle.classList.toggle('active');
+    layout.classList.toggle('faq-open');
+}
+
+function toggleCategory(btn) {
+    const category = btn.closest('.faq-category');
+    category.classList.toggle('expanded');
+}
+
+function filterFaq(query) {
+    const lowerQuery = query.toLowerCase().trim();
+    const categories = document.querySelectorAll('.faq-category');
+    
+    categories.forEach(category => {
+        const items = category.querySelectorAll('.faq-item');
+        let hasMatch = false;
+        
+        items.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            const matches = text.includes(lowerQuery);
+            
+            item.style.display = matches || !lowerQuery ? '' : 'none';
+            if (matches) hasMatch = true;
+        });
+        
+        // Auto-expand categories with matches
+        if (lowerQuery && hasMatch) {
+            category.classList.add('expanded');
+        } else if (!lowerQuery) {
+            category.classList.remove('expanded');
+        }
+        
+        // Hide categories with no matches
+        category.style.display = hasMatch || !lowerQuery ? '' : 'none';
+    });
+}
+
+function renderFaqCategories(data) {
+    if (!data.categories || !Array.isArray(data.categories)) {
+        return;
+    }
+    
+    faqList.innerHTML = data.categories.map(category => `
+        <div class="faq-category">
+            <button class="faq-category-btn" onclick="toggleCategory(this)">
+                <div>
+                    <span class="faq-category-label">${escapeHtml(category.name)}</span>
+                    <span class="faq-category-meta">${category.items ? category.items.length : 0} articles</span>
+                </div>
+                <svg class="faq-category-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+            </button>
+            <div class="faq-items">
+                ${category.items ? category.items.map(item => `
+                    <div class="faq-item" onclick="askAbout(this)">
+                        ${escapeHtml(item.question)}
+                    </div>
+                `).join('') : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+function askAbout(el) {
+    const topic = el.textContent.trim();
+    
+    // Close FAQ panel if open
+    if (faqOpen) {
+        toggleFaqPanel();
+    }
+    
+    // Transition to chat view
+    welcomeView.classList.add('hidden');
+    chatView.classList.add('active');
+    
+    // Send message about the topic
+    const message = `I have a question about: ${topic}`;
+    selectedCategory = 'other'; // Best guess, or could be smarter
+    
+    addMessage('user', message);
+    showTyping();
+    
+    // Call API
+    callMessageAPI(message);
+}
+
+// Welcome → Chat Transition
+function startChat(category) {
     selectedCategory = category;
     
     // Hide welcome, show chat
-    if (chatWelcome) chatWelcome.style.display = 'none';
-    if (chatInterface) chatInterface.style.display = 'flex';
+    welcomeView.classList.add('hidden');
+    chatView.classList.add('active');
     
-    // Show connecting message
-    addSystemMessage('Give us a moment while we connect you with support...');
-    
-    // Brief pause (1.5 seconds)
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Show connected message
-    addSystemMessage('Connected to Docket Website Support');
-    
-    // Show typing indicator
-    showTypingIndicator();
-    
-    // Wait 2-3 seconds (feels like agent is typing greeting)
-    const typingDelay = 2000 + Math.random() * 1000;
-    await new Promise(resolve => setTimeout(resolve, typingDelay));
-    
-    // Hide typing indicator
-    hideTypingIndicator();
-    
-    // Show tailored greeting based on category
+    // Determine greeting message
     const greetings = {
-        status: "Hi there! I can help you check on your website build. What's the name of your company?",
-        editing: "Hi! I'd be happy to help you make changes to your website. What are you trying to update?",
-        login: "Hi! Let's get you logged in. Are you having trouble with your password, or can't find your login details?",
-        other: "Hi! How can I help you today?"
+        status: "I'd like to check on my website build status.",
+        edits: "I need help making changes to my website.",
+        login: "I'm having trouble logging into my site.",
+        other: "I have a question about my website."
     };
     
-    addBotMessage(greetings[category] || greetings.other);
+    const greeting = greetings[category] || greetings.other;
     
-    // Focus the input
-    if (messageInput) messageInput.focus();
-}
-
-// Start chat - show initial messages
-function startChat() {
-    startChatWithCategory('other');
-}
-
-// Handle send
-async function handleSend() {
-    const message = messageInput.value.trim();
-    if (!message) return;
-
-    // Clear input
-    messageInput.value = '';
-    messageInput.style.height = 'auto';
-
     // Add user message
-    addUserMessage(message);
-
+    addMessage('user', greeting);
+    
     // Show typing indicator
-    showTypingIndicator();
+    showTyping();
+    
+    // Call API
+    callMessageAPI(greeting);
+}
 
+function handleWelcomeSend() {
+    const message = welcomeInput.value.trim();
+    if (!message) return;
+    
+    welcomeInput.value = '';
+    selectedCategory = 'other';
+    
+    // Transition to chat
+    welcomeView.classList.add('hidden');
+    chatView.classList.add('active');
+    
+    // Add user message and send
+    addMessage('user', message);
+    showTyping();
+    callMessageAPI(message);
+}
+
+function goBack() {
+    chatView.classList.remove('active');
+    welcomeView.classList.remove('hidden');
+    // Optionally reset conversation
+    // conversationId = null;
+    // selectedCategory = null;
+}
+
+// Message Functions
+function sendMessage() {
+    const message = chatInput.value.trim();
+    if (!message) return;
+    
+    chatInput.value = '';
+    
+    // Add user message
+    addMessage('user', message);
+    
+    // Show typing indicator
+    showTyping();
+    
+    // Call API
+    callMessageAPI(message);
+}
+
+async function callMessageAPI(message) {
     try {
-        // Send to API - Claude handles EVERYTHING
         const response = await fetch('/api/message', {
             method: 'POST',
             headers: {
@@ -199,15 +276,11 @@ async function handleSend() {
 
         const data = await response.json();
 
-        // Realistic delay (2-4 seconds)
-        const delay = 2000 + Math.random() * 2000;
-        await new Promise(resolve => setTimeout(resolve, delay));
-
         // Hide typing indicator
-        hideTypingIndicator();
+        hideTyping();
 
         if (data.error) {
-            addBotMessage("I'm having trouble right now. Could you try again in a moment?");
+            addMessage('agent', "Something went wrong on my end. Mind trying that again?");
             return;
         }
 
@@ -216,100 +289,60 @@ async function handleSend() {
             conversationId = data.conversationId;
         }
 
-        // Show response from Claude
-        addBotMessage(data.response);
+        // Show response from API
+        addMessage('agent', data.response);
 
     } catch (error) {
         console.error('Error:', error);
-        hideTypingIndicator();
-        addBotMessage("Something went wrong on my end. Mind trying that again?");
+        hideTyping();
+        addMessage('agent', "Something went wrong on my end. Mind trying that again?");
     }
 }
 
-// Add system message
-function addSystemMessage(text) {
-    const div = document.createElement('div');
-    div.className = 'system-message';
-    div.innerHTML = `<span class="system-message-text">${text}</span>`;
-    chatMessages.appendChild(div);
-    scrollToBottom();
-}
-
-// Add bot message
-function addBotMessage(content) {
-    const quickActions = getQuickActions(content);
-    const quickActionsHtml = quickActions.length > 0
-        ? `<div class="message-actions">${quickActions.map(action =>
-            `<button class="message-action-btn" onclick="sendQuickAction('${action.replace(/'/g, "\\'")}')">${action}</button>`
-          ).join('')}</div>`
-        : '';
-
-    const div = document.createElement('div');
-    div.className = 'message bot';
-    div.innerHTML = `
-        <div class="message-avatar">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
-        </div>
-        <div class="message-wrapper">
-            <div class="message-content">
-                <div class="message-text">${content}</div>
-                ${quickActionsHtml}
+function addMessage(type, text) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${type}`;
+    
+    if (type === 'agent') {
+        // Agent messages: use innerHTML directly (no escaping) to allow HTML from API
+        messageDiv.innerHTML = `
+            <div class="message-avatar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                    <path d="M2 17l10 5 10-5"/>
+                    <path d="M2 12l10 5 10-5"/>
+                </svg>
             </div>
-            <div class="message-time">${formatTime()}</div>
-        </div>
-    `;
-    chatMessages.appendChild(div);
-    scrollToBottom();
-}
-
-// Add user message
-function addUserMessage(text) {
-    const div = document.createElement('div');
-    div.className = 'message user';
-    div.innerHTML = `
-        <div class="message-avatar">
-            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-        </div>
-        <div class="message-wrapper">
-            <div class="message-content">
-                <div class="message-text">${escapeHtml(text)}</div>
+            <div class="message-bubble">${text}</div>
+        `;
+    } else {
+        // User messages: escape HTML first
+        messageDiv.innerHTML = `
+            <div class="message-avatar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
             </div>
-            <div class="message-time">${formatTime()}</div>
-        </div>
-    `;
-    chatMessages.appendChild(div);
-    scrollToBottom();
-}
-
-// Get contextual quick actions based on response content
-function getQuickActions(content) {
-    return [];
-}
-
-// Send quick action as message
-function sendQuickAction(action) {
-    // Remove quick actions from last message
-    const lastActions = chatMessages.querySelector('.message:last-child .message-actions');
-    if (lastActions) {
-        lastActions.remove();
+            <div class="message-bubble">${escapeHtml(text)}</div>
+        `;
     }
-
-    // Set input and send
-    messageInput.value = action;
-    handleSend();
+    
+    chatMessages.appendChild(messageDiv);
+    scrollToBottom();
 }
 
-// Make sendQuickAction available globally for onclick handlers
-window.sendQuickAction = sendQuickAction;
-
-// Show typing indicator
-function showTypingIndicator() {
-    const div = document.createElement('div');
-    div.className = 'message bot';
-    div.id = 'typingIndicator';
-    div.innerHTML = `
+function showTyping() {
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'message agent';
+    typingDiv.id = 'typingIndicator';
+    typingDiv.innerHTML = `
         <div class="message-avatar">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+            </svg>
         </div>
         <div class="typing-indicator">
             <div class="typing-dot"></div>
@@ -317,59 +350,29 @@ function showTypingIndicator() {
             <div class="typing-dot"></div>
         </div>
     `;
-    chatMessages.appendChild(div);
+    
+    chatMessages.appendChild(typingDiv);
     scrollToBottom();
 }
 
-// Hide typing indicator
-function hideTypingIndicator() {
+function hideTyping() {
     const indicator = document.getElementById('typingIndicator');
     if (indicator) {
         indicator.remove();
     }
 }
 
-// FAQ search handler
-function handleFAQSearch(e) {
-    const query = e.target.value.toLowerCase().trim();
-
-    document.querySelectorAll('.faq-category').forEach(category => {
-        let categoryHasMatch = false;
-
-        category.querySelectorAll('.faq-item').forEach(item => {
-            const question = item.querySelector('.faq-item-question').textContent.toLowerCase();
-            const answer = item.querySelector('.faq-item-answer').textContent.toLowerCase();
-            const matches = question.includes(query) || answer.includes(query);
-
-            item.style.display = matches || !query ? '' : 'none';
-            if (matches) categoryHasMatch = true;
-        });
-
-        // Show category if it has matching items
-        category.style.display = categoryHasMatch || !query ? '' : 'none';
-
-        // Auto-expand categories with matches
-        if (query && categoryHasMatch) {
-            category.classList.add('expanded');
-        } else if (!query) {
-            category.classList.remove('expanded');
-        }
-    });
-}
-
-// Utility: Scroll to bottom
-function scrollToBottom() {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-// Utility: Format time
-function formatTime() {
-    return new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-}
-
-// Utility: Escape HTML for user input
+// Utility Functions
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 }
+
+function scrollToBottom() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Make functions available globally for onclick handlers
+window.toggleCategory = toggleCategory;
+window.askAbout = askAbout;
