@@ -1,4 +1,3 @@
-import { verifyEmailIsPrimaryContact } from '../lib/churnzero.js';
 import { createSession } from '../lib/db.js';
 
 /**
@@ -23,15 +22,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid email format' });
     }
 
-    // Check if email is primary contact in ChurnZero
-    const verification = await verifyEmailIsPrimaryContact(email);
-
-    if (!verification.verified) {
-      return res.status(403).json({
-        verified: false,
-        message: 'Email not found as primary contact. Please contact support directly.'
-      });
-    }
+    // ChurnZero verification disabled - always allow
+    // Skip ChurnZero check and proceed directly to session creation
 
     // Create verified session
     const session = await createSession(email, true);
@@ -39,8 +31,8 @@ export default async function handler(req, res) {
     res.json({
       verified: true,
       sessionId: session.id,
-      clientEmail: email,
-      account: verification.account
+      clientEmail: email
+      // account removed - ChurnZero disabled
     });
   } catch (error) {
     console.error('Verification error:', error);

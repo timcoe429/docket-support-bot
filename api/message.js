@@ -219,8 +219,12 @@ export default async function handler(req, res) {
 
     try {
       churnZeroContext = await getAccountContext('anonymous');
+      if (!churnZeroContext) {
+        churnZeroContext = null; // Explicitly set to null if function returns null
+      }
     } catch (error) {
       console.error('Error fetching ChurnZero context:', error);
+      churnZeroContext = null;
     }
 
     try {

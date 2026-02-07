@@ -48,8 +48,12 @@ export default async function handler(req, res) {
 
     try {
       churnZeroContext = await getAccountContext(clientEmail);
+      if (!churnZeroContext) {
+        churnZeroContext = null;
+      }
     } catch (error) {
       console.error('Error fetching ChurnZero context:', error);
+      churnZeroContext = null;
     }
 
     try {
