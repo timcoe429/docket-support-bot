@@ -192,7 +192,11 @@ function askAbout(el) {
 
 // Welcome → Chat Transition
 function startChat(category) {
+    // Reset conversation for fresh start
+    conversationId = null;
     selectedCategory = category;
+    // Clear any previous messages
+    document.getElementById('chatMessages').innerHTML = '';
     
     // Hide welcome, show chat
     welcomeView.classList.add('hidden');
@@ -238,9 +242,10 @@ function handleWelcomeSend() {
 function goBack() {
     chatView.classList.remove('active');
     welcomeView.classList.remove('hidden');
-    // Optionally reset conversation
-    // conversationId = null;
-    // selectedCategory = null;
+    conversationId = null;
+    selectedCategory = null;
+    // Clear chat messages so old conversation doesn't show
+    document.getElementById('chatMessages').innerHTML = '';
 }
 
 // Message Functions

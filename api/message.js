@@ -1,5 +1,5 @@
 import { getActiveConversation, createConversation, addMessage, getConversationMessages, updateConversationStatus } from '../lib/db.js';
-import { createSupportCard, findClientCard, formatProjectStatus } from '../lib/trello.js';
+import { findClientCard, formatProjectStatus } from '../lib/trello.js';
 import { searchKnowledgeBase } from '../lib/db.js';
 import { shouldEscalate } from '../lib/escalation.js';
 import { generateResponse } from '../lib/claude.js';
@@ -127,36 +127,14 @@ export default async function handler(req, res) {
       }
     );
 
-    // Handle escalation - create Trello card
+    // Handle escalation - Slack only (no Trello card)
     if (escalationTriggered) {
       await updateConversationStatus(conversation.id, 'escalated', escalationReason);
 
-      // Get full conversation history for the card
-      const conversationHistory = await getConversationMessages(conversation.id);
-
-      let trelloCardUrl = null;
+      // Notify Slack (no Trello card — Slack is the notification)
       try {
-        const card = await createSupportCard({
-          clientEmail: 'anonymous',
-          conversationId: conversation.id,
-          escalationReason,
-          conversationHistory: conversationHistory.concat([
-            { role: 'user', content: message },
-            { role: 'assistant', content: botResponse }
-          ]),
-          churnZeroContext: null,
-          trelloContext
-        });
-        console.log('Support card created:', card.id);
-        trelloCardUrl = card.shortUrl || card.url || null;
-      } catch (error) {
-        console.error('Error creating Trello card:', error);
-        // Don't fail the request if card creation fails
-      }
-
-      // Notify Slack
-      try {
-        const recentMessages = conversationHistory.slice(-6);
+        const fullHistory = await getConversationMessages(conversation.id);
+        const recentMessages = fullHistory.slice(-6);
         const summary = recentMessages
           .map(msg => `${msg.role === 'user' ? 'Client' : 'Agent'}: ${msg.content.substring(0, 150)}`)
           .join('\n');
@@ -165,12 +143,18 @@ export default async function handler(req, res) {
           clientName: trelloContext?.companyName || 'Unknown client',
           issue: escalationReason,
           chatSummary: summary,
-          trelloCardUrl: trelloCardUrl
+          trelloCardUrl: null
         });
+        console.log('Slack escalation sent');
       } catch (error) {
         console.error('Error sending Slack notification:', error);
       }
     }
+
+    // Debug: log raw response to check formatting
+    console.log('=== RAW BOT RESPONSE ===');
+    console.log(botResponse.substring(0, 500));
+    console.log('=== END RAW RESPONSE ===');
 
     res.json({
       response: botResponse,
