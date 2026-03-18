@@ -1,6 +1,5 @@
-import { getActiveConversation, createConversation, addMessage, getConversationMessages, updateConversationStatus } from '../lib/db.js';
+import { getConversation, createConversation, addMessage, getConversationMessages, updateConversationStatus, searchKnowledgeBase } from '../lib/db.js';
 import { findClientCard, formatProjectStatus } from '../lib/trello.js';
-import { searchKnowledgeBase } from '../lib/db.js';
 import { shouldEscalate } from '../lib/escalation.js';
 import { generateResponse } from '../lib/claude.js';
 import { sendSlackEscalation } from '../lib/slack.js';
@@ -15,7 +14,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message, conversationId, category } = req.body;
+    const { message, category } = req.body;
 
     console.log('=== REQUEST DEBUG ===');
     console.log('Message:', message);
@@ -25,8 +24,20 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    // Create or get conversation (using anonymous email)
-    let conversation = await getActiveConversation('anonymous');
+    // Use conversationId from frontend if provided, otherwise create new
+    const incomingConversationId = req.body.conversationId || null;
+
+    let conversation = null;
+
+    if (incomingConversationId) {
+      try {
+        conversation = await getConversation(incomingConversationId);
+      } catch (error) {
+        console.error('Could not load conversation:', incomingConversationId);
+        conversation = null;
+      }
+    }
+
     if (!conversation) {
       conversation = await createConversation('anonymous');
     }
@@ -97,7 +108,7 @@ export default async function handler(req, res) {
 
     if (escalationTriggered) {
       // If escalation triggered, respond with escalation message
-      botResponse = "Let me get Kayla to help with this - she'll follow up with you shortly.";
+      botResponse = "I've submitted your info to our Docket Websites team. Someone will follow up with you via email shortly — our support hours are Monday through Friday, 8am to 5pm EST.";
     } else {
       // Always call Claude to generate AI response
       try {
@@ -110,7 +121,7 @@ export default async function handler(req, res) {
       } catch (error) {
         console.error('Claude API error:', error);
         // Fallback: friendly message and trigger escalation
-        botResponse = "I'm having trouble connecting right now. Let me create a support ticket so our team can help you directly.";
+        botResponse = "I'm having a little trouble on my end right now. Can you try that again? If it keeps happening, shoot us an email at websites@yourdocket.com and we'll get you sorted out.";
         escalationTriggered = true;
         escalationReason = 'Claude API error: ' + error.message;
       }
