@@ -1,6 +1,5 @@
 import { getSession } from '../lib/db.js';
 import { getActiveConversation, getConversationMessages, updateConversationStatus } from '../lib/db.js';
-import { getAccountContext } from '../lib/churnzero.js';
 import { getClientProjectStatus, createSupportCard } from '../lib/trello.js';
 
 /**
@@ -43,21 +42,10 @@ export default async function handler(req, res) {
     const conversationHistory = await getConversationMessages(conversation.id);
 
     // Pull context
-    let churnZeroContext = null;
     let trelloContext = null;
 
     try {
-      churnZeroContext = await getAccountContext(clientEmail);
-      if (!churnZeroContext) {
-        churnZeroContext = null;
-      }
-    } catch (error) {
-      console.error('Error fetching ChurnZero context:', error);
-      churnZeroContext = null;
-    }
-
-    try {
-      const accountName = churnZeroContext?.account?.name || clientEmail;
+      const accountName = clientEmail;
       trelloContext = await getClientProjectStatus(accountName, clientEmail);
     } catch (error) {
       console.error('Error fetching Trello context:', error);
@@ -74,7 +62,7 @@ export default async function handler(req, res) {
         conversationId: conversation.id,
         escalationReason,
         conversationHistory,
-        churnZeroContext,
+        churnZeroContext: null,
         trelloContext
       });
       console.log('Support card created:', card.id);

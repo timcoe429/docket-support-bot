@@ -2,7 +2,7 @@ import { createSession } from '../lib/db.js';
 
 /**
  * POST /api/verify
- * Verify client email against ChurnZero primary contact
+ * Verify client email and create session
  */
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -22,9 +22,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid email format' });
     }
 
-    // ChurnZero verification disabled - always allow
-    // Skip ChurnZero check and proceed directly to session creation
-
     // Create verified session
     const session = await createSession(email, true);
 
@@ -32,7 +29,6 @@ export default async function handler(req, res) {
       verified: true,
       sessionId: session.id,
       clientEmail: email
-      // account removed - ChurnZero disabled
     });
   } catch (error) {
     console.error('Verification error:', error);

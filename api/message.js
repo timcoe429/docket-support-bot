@@ -1,113 +1,8 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { getActiveConversation, createConversation, addMessage, getConversationMessages, updateConversationStatus } from '../lib/db.js';
-import { getAccountContext } from '../lib/churnzero.js';
-import { getClientProjectStatus, createSupportCard, findClientCard, formatProjectStatus } from '../lib/trello.js';
+import { createSupportCard, findClientCard, formatProjectStatus } from '../lib/trello.js';
 import { searchKnowledgeBase } from '../lib/db.js';
 import { shouldEscalate } from '../lib/escalation.js';
 import { generateResponse } from '../lib/claude.js';
-
-// Get current directory for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Load FAQ data
-const faqPath = path.join(process.cwd(), 'public', 'faq.json');
-let faqData = { categories: [] };
-
-try {
-  const faqContent = fs.readFileSync(faqPath, 'utf-8');
-  faqData = JSON.parse(faqContent);
-} catch (error) {
-  console.error('Error loading FAQ data:', error);
-  faqData = { categories: [] };
-}
-
-/**
- * Extract company name from message (simple heuristic)
- */
-function extractCompanyName(message) {
-  // Simple extraction - if message is short and doesn't contain question words,
-  // it might be a company name response
-  const questionWords = ['what', 'where', 'when', 'how', 'why', 'is', 'are', 'can', 'do', 'does'];
-  const lowerMessage = message.toLowerCase().trim();
-  
-  // If it's a short message (1-5 words) without question words, might be a company name
-  const words = lowerMessage.split(/\s+/);
-  if (words.length <= 5 && !questionWords.some(qw => lowerMessage.startsWith(qw))) {
-    return message.trim();
-  }
-  
-  return null;
-}
-
-/**
- * Find matching FAQ based on keywords and question text
- * Searches through nested category structure
- */
-function findMatchingFAQ(message) {
-  const messageLower = message.toLowerCase();
-  const messageWords = messageLower.split(/\s+/).filter(word => word.length > 2);
-  
-  let bestMatch = null;
-  let bestScore = 0;
-  
-  // Iterate through all categories
-  if (!faqData.categories || !Array.isArray(faqData.categories)) {
-    return null;
-  }
-  
-  for (const category of faqData.categories) {
-    if (!category.items || !Array.isArray(category.items)) {
-      continue;
-    }
-    
-    // Check each FAQ item in the category
-    for (const item of category.items) {
-      let score = 0;
-      
-      // Check keywords
-      if (item.keywords && Array.isArray(item.keywords)) {
-        for (const keyword of item.keywords) {
-          const keywordLower = keyword.toLowerCase();
-          if (messageLower.includes(keywordLower)) {
-            score += 2; // Keywords are weighted higher
-          }
-        }
-      }
-      
-      // Check question text
-      const questionLower = item.question.toLowerCase();
-      const questionWords = questionLower.split(/\s+/).filter(word => word.length > 2);
-      
-      // Count matching words
-      const matchingWords = questionWords.filter(qWord => 
-        messageWords.some(mWord => qWord.includes(mWord) || mWord.includes(qWord))
-      );
-      
-      score += matchingWords.length;
-      
-      // Exact phrase match gets bonus
-      if (messageLower.includes(questionLower) || questionLower.includes(messageLower)) {
-        score += 5;
-      }
-      
-      // Update best match if this score is higher
-      if (score > bestScore) {
-        bestScore = score;
-        bestMatch = {
-          ...item,
-          category: category.name,
-          categoryId: category.id
-        };
-      }
-    }
-  }
-  
-  // Return match if score is at least 2 (meaningful match)
-  return bestScore >= 2 ? bestMatch : null;
-}
 
 /**
  * POST /api/message
@@ -135,12 +30,12 @@ export default async function handler(req, res) {
       conversation = await createConversation('anonymous');
     }
 
-    // Check for escalation triggers in user message
+    // Only auto-escalate for explicit human requests
     const escalationCheck = shouldEscalate(message);
     let escalationTriggered = false;
     let escalationReason = null;
 
-    if (escalationCheck.shouldEscalate) {
+    if (escalationCheck.shouldEscalate && escalationCheck.reason === 'Explicit request for human agent') {
       escalationTriggered = true;
       escalationReason = escalationCheck.reason;
     }
@@ -155,78 +50,35 @@ export default async function handler(req, res) {
       content: msg.content
     }));
 
-    // Check if this message or recent conversation is about project status
+    // Trello lookup — try if status category selected
     let trelloContext = null;
 
-    // If user selected "status" category, always try Trello lookup with their message
     if (category === 'status') {
-        console.log('Status category detected, attempting Trello lookup for:', message);
-        try {
-            const cardData = await findClientCard(message);
-            console.log('Trello card data:', cardData);
-            if (cardData) {
-                trelloContext = formatProjectStatus(cardData);
-                console.log('Formatted Trello context:', trelloContext);
-            } else {
-                console.log('No card found for:', message);
-            }
-        } catch (error) {
-            console.error('Trello lookup error:', error);
+      // Always try lookup for status category
+      try {
+        const cardData = await findClientCard(message);
+        if (cardData) {
+          trelloContext = formatProjectStatus(cardData);
         }
-    }
 
-    const statusKeywords = ['where', 'status', 'progress', 'update', 'my website', 'my site', 'how long', 'when will', 'waiting'];
-    const currentMessageAsksStatus = statusKeywords.some(kw => message.toLowerCase().includes(kw));
-
-    // Check if recent messages asked about status (user might be providing company name as follow-up)
-    const recentAskedStatus = history.slice(-4).some(msg => 
-        msg.role === 'user' && statusKeywords.some(kw => msg.content.toLowerCase().includes(kw))
-    );
-
-    // Also check if this looks like a company name (short message, no question words)
-    const looksLikeCompanyName = message.split(/\s+/).length <= 5 && 
-        !['what', 'where', 'when', 'how', 'why', 'is', 'are', 'can', 'do', 'does', 'will'].some(qw => 
-            message.toLowerCase().startsWith(qw)
-        );
-
-    // Try Trello lookup if: asking about status OR recent convo asked about status and this looks like a company name
-    if (currentMessageAsksStatus || (recentAskedStatus && looksLikeCompanyName)) {
-        try {
-            // Try the current message as a company name
-            let cardData = await findClientCard(message);
-            
-            // If not found and we have history, try recent messages
-            if (!cardData && history.length > 0) {
-                for (const msg of history.slice(-4)) {
-                    if (msg.role === 'user') {
-                        cardData = await findClientCard(msg.content);
-                        if (cardData) break;
-                    }
-                }
-            }
-            
-            if (cardData) {
+        // If no match on current message, check recent messages for company name
+        if (!trelloContext && history.length > 0) {
+          for (const msg of history.slice(-6)) {
+            if (msg.role === 'user') {
+              const cardData = await findClientCard(msg.content);
+              if (cardData) {
                 trelloContext = formatProjectStatus(cardData);
+                break;
+              }
             }
-        } catch (error) {
-            console.error('Error fetching Trello context:', error);
+          }
         }
-    }
-
-    // Try to get context
-    let churnZeroContext = null;
-    let knowledgeBaseResults = [];
-
-    try {
-      churnZeroContext = await getAccountContext('anonymous');
-      if (!churnZeroContext) {
-        churnZeroContext = null; // Explicitly set to null if function returns null
+      } catch (error) {
+        console.error('Trello lookup error:', error);
       }
-    } catch (error) {
-      console.error('Error fetching ChurnZero context:', error);
-      churnZeroContext = null;
     }
 
+    let knowledgeBaseResults = [];
     try {
       knowledgeBaseResults = await searchKnowledgeBase(message);
     } catch (error) {
@@ -235,7 +87,6 @@ export default async function handler(req, res) {
 
     // Build context object for Claude
     const context = {
-      churnZero: churnZeroContext || null,
       trello: trelloContext || null,
       knowledgeBase: knowledgeBaseResults || []
     };
@@ -252,7 +103,7 @@ export default async function handler(req, res) {
         const claudeResponse = await generateResponse(
           message, // current user message
           history, // previous messages (already formatted)
-          context // ChurnZero, Trello, KB context
+          context // Trello, KB context
         );
         botResponse = claudeResponse.response; // Note: Claude returns {response, usage, stopReason}
       } catch (error) {
@@ -270,8 +121,7 @@ export default async function handler(req, res) {
       'assistant',
       botResponse,
       {
-        churnZero: churnZeroContext ? { account: churnZeroContext.account } : null,
-        trello: trelloContext ? { activeProjects: trelloContext.activeProjects?.length || 0 } : null,
+        trello: trelloContext ? true : false,
         knowledgeBase: knowledgeBaseResults.length
       }
     );
@@ -292,7 +142,7 @@ export default async function handler(req, res) {
             { role: 'user', content: message },
             { role: 'assistant', content: botResponse }
           ]),
-          churnZeroContext,
+          churnZeroContext: null,
           trelloContext
         });
         console.log('Support card created:', card.id);
