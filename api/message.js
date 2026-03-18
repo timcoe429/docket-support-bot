@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message, category } = req.body;
+    const { message, conversationId, category } = req.body;
 
     console.log('=== REQUEST DEBUG ===');
     console.log('Message:', message);
@@ -24,9 +24,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    // Use conversationId from frontend if provided, otherwise create new
     const incomingConversationId = req.body.conversationId || null;
-
     let conversation = null;
 
     if (incomingConversationId) {
@@ -34,7 +32,6 @@ export default async function handler(req, res) {
         conversation = await getConversation(incomingConversationId);
       } catch (error) {
         console.error('Could not load conversation:', incomingConversationId);
-        conversation = null;
       }
     }
 
