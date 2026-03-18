@@ -59,11 +59,13 @@ export default async function handler(req, res) {
       content: msg.content
     }));
 
-    // Trello lookup — try if status category selected
+    // Trello lookup — only when status category AND we haven't already used Trello in this conversation
     let trelloContext = null;
+    const hasTrelloInHistory = previousMessages.some(msg =>
+      msg.role === 'assistant' && msg.context_used && msg.context_used.trello
+    );
 
-    if (category === 'status') {
-      // Always try lookup for status category
+    if (category === 'status' && !hasTrelloInHistory) {
       try {
         const cardData = await findClientCard(message);
         if (cardData) {
