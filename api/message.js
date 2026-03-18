@@ -3,6 +3,7 @@ import { createSupportCard, findClientCard, formatProjectStatus } from '../lib/t
 import { searchKnowledgeBase } from '../lib/db.js';
 import { shouldEscalate } from '../lib/escalation.js';
 import { generateResponse } from '../lib/claude.js';
+import { sendSlackEscalation } from '../lib/slack.js';
 
 /**
  * POST /api/message
@@ -133,6 +134,7 @@ export default async function handler(req, res) {
       // Get full conversation history for the card
       const conversationHistory = await getConversationMessages(conversation.id);
 
+      let trelloCardUrl = null;
       try {
         const card = await createSupportCard({
           clientEmail: 'anonymous',
@@ -146,9 +148,27 @@ export default async function handler(req, res) {
           trelloContext
         });
         console.log('Support card created:', card.id);
+        trelloCardUrl = card.shortUrl || card.url || null;
       } catch (error) {
         console.error('Error creating Trello card:', error);
         // Don't fail the request if card creation fails
+      }
+
+      // Notify Slack
+      try {
+        const recentMessages = conversationHistory.slice(-6);
+        const summary = recentMessages
+          .map(msg => `${msg.role === 'user' ? 'Client' : 'Agent'}: ${msg.content.substring(0, 150)}`)
+          .join('\n');
+
+        await sendSlackEscalation({
+          clientName: trelloContext?.companyName || 'Unknown client',
+          issue: escalationReason,
+          chatSummary: summary,
+          trelloCardUrl: trelloCardUrl
+        });
+      } catch (error) {
+        console.error('Error sending Slack notification:', error);
       }
     }
 
