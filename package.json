@@ -21,6 +21,7 @@
     "@anthropic-ai/sdk": "^0.20.0",
     "@neondatabase/serverless": "^0.10.4",
     "@sendgrid/mail": "^7.7.0",
+    "@vercel/analytics": "^2.0.1",
     "dotenv": "^16.3.1"
   },
   "devDependencies": {
