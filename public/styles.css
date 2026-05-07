@@ -732,60 +732,6 @@ body {
   height: 16px;
 }
 
-.contact-strip {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 12px 14px;
-  margin-bottom: 4px;
-  box-shadow: var(--shadow-sm);
-}
-
-.contact-strip-hint {
-  font-size: 12px;
-  line-height: 1.45;
-  color: var(--text-secondary);
-  margin-bottom: 10px;
-}
-
-.contact-strip-fields {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.contact-input {
-  font-family: inherit;
-  font-size: 13px;
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text-primary);
-  width: 100%;
-  min-width: 0;
-}
-
-.contact-input:focus {
-  outline: none;
-  border-color: var(--brand);
-  box-shadow: 0 0 0 2px rgba(8, 145, 178, 0.12);
-}
-
-.contact-input-wide {
-  grid-column: 1 / -1;
-}
-
-@media (max-width: 540px) {
-  .contact-strip-fields {
-    grid-template-columns: 1fr;
-  }
-
-  .contact-input-wide {
-    grid-column: 1;
-  }
-}
-
 .messages-area {
   flex: 1;
   overflow-y: auto;

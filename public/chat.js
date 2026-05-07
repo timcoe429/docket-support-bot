@@ -20,9 +20,6 @@ const chatInput = document.getElementById('chatInput');
 const chatSendBtn = document.getElementById('chatSendBtn');
 const backButton = document.getElementById('backButton');
 const topicCards = document.querySelectorAll('.topic-card');
-const contactFullName = document.getElementById('contactFullName');
-const contactBusinessName = document.getElementById('contactBusinessName');
-const contactEmail = document.getElementById('contactEmail');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', init);
@@ -268,34 +265,18 @@ function sendMessage() {
     callMessageAPI(message);
 }
 
-function getContactPayload() {
-    const fullName = (contactFullName && contactFullName.value.trim()) || '';
-    const businessName = (contactBusinessName && contactBusinessName.value.trim()) || '';
-    const email = (contactEmail && contactEmail.value.trim()) || '';
-    if (!fullName && !businessName && !email) {
-        return null;
-    }
-    return { fullName, businessName, email };
-}
-
 async function callMessageAPI(message) {
     try {
-        const contact = getContactPayload();
-        const payload = {
-            message: message,
-            conversationId: conversationId,
-            category: selectedCategory
-        };
-        if (contact) {
-            payload.contact = contact;
-        }
-
         const response = await fetch('/api/message', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({
+                message: message,
+                conversationId: conversationId,
+                category: selectedCategory
+            })
         });
 
         const data = await response.json();

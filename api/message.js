@@ -3,8 +3,7 @@ import {
     createConversation,
     addMessage,
     getConversationMessages,
-    updateConversationStatus,
-    updateConversationContact
+    updateConversationStatus
 } from '../lib/db.js';
 import { generateResponse } from '../lib/claude.js';
 
@@ -18,7 +17,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { message, conversationId, contact } = req.body;
+        const { message, conversationId } = req.body;
 
         if (!message) {
             return res.status(400).json({ error: 'Message is required' });
@@ -37,19 +36,6 @@ export default async function handler(req, res) {
 
         if (!conversation) {
             conversation = await createConversation('anonymous');
-        }
-
-        if (contact && typeof contact === 'object') {
-            const hasPiece = ['fullName', 'businessName', 'email'].some(
-                k => typeof contact[k] === 'string' && contact[k].trim().length > 0
-            );
-            if (hasPiece) {
-                conversation = await updateConversationContact(conversation.id, {
-                    fullName: contact.fullName,
-                    businessName: contact.businessName,
-                    email: contact.email
-                });
-            }
         }
 
         // Save user message
